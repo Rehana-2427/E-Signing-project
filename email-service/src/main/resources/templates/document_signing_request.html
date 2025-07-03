@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Document Signature Request</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; background-color: #f6f6f6; padding: 20px; color: #333;">
+	<table width="100%" cellpadding="0" cellspacing="0"
+		style="max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px;">
+		<tr>
+			<td style="padding: 20px;">
+				<h2 style="color: #007BFF;">📄 Document Signature Request</h2>
+
+				<p>Dear <strong th:text="${recipient}"> [Signer],</strong></p>
+				<p>You have a new document titled <strong th:text="${title}">[Title]</strong> that requires your
+					signature.</p>
+				<p>Please review and sign it by <strong th:text="${signRequiredBy}">[Date]</strong>.</p>
+				<p>If you have questions, you can reply to <strong th:text="${senderEmail}">[Sender Email]</strong>.</p>
+				<p>Thank you,<br />JobBox Team</p>
+			</td>
+		</tr>
+	</table>
+</body>
+
+</html>

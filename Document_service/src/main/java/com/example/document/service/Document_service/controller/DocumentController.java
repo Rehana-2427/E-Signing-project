@@ -44,6 +44,7 @@ public class DocumentController {
 		return new ResponseEntity<Document>(result, HttpStatus.OK);
 	}
 
+
 	@GetMapping("/getDocument")
 	public ResponseEntity<List<Document>> getDocument(@RequestParam String userEmail) {
 		return new ResponseEntity<List<Document>>( documentService.getDocumentByUserEmail(userEmail),HttpStatus.OK);
@@ -59,6 +60,7 @@ public class DocumentController {
 	        .contentType(MediaType.APPLICATION_PDF)
 	        .body(pdfData);
 	}
+
 	
 	@PostMapping("/save-sign-document")
 	public ResponseEntity<Sign_Document> uploadSignedDocument(

@@ -2,11 +2,13 @@ package com.example.e_signing.email_service.email_service.service;
 
 import org.springframework.stereotype.Service;
 
+import com.example.e_signing.email_service.email_service.request.EmailRequest;
+
 @Service
 public interface EmailService {
 
-	void sendEmail(String to, String subject, String body);
+	public void sendEmail(EmailRequest request);
 
 
-//	String sendotp(String userEmail);
+	public void sendDocumentEmails(EmailRequest request) throws Exception;
 }

@@ -1,4 +1,4 @@
-package com.example.e_signing.email_service.email_service.request;
+package com.example.document.service.Document_service.entity;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -6,38 +6,11 @@ import java.util.List;
 
 public class EmailRequest {
 
-	private String to;
-	private String subject;
-	private String body;
 	private String senderEmail;
 	private List<String> recipientEmails;
 	private String title;
 	private LocalDate signRequiredBy;
 	private byte[] pdfBytes;
-
-	public String getTo() {
-		return to;
-	}
-
-	public void setTo(String to) {
-		this.to = to;
-	}
-
-	public String getSubject() {
-		return subject;
-	}
-
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-
-	public String getBody() {
-		return body;
-	}
-
-	public void setBody(String body) {
-		this.body = body;
-	}
 
 	public String getSenderEmail() {
 		return senderEmail;
@@ -81,9 +54,8 @@ public class EmailRequest {
 
 	@Override
 	public String toString() {
-		return "EmailRequest [to=" + to + ", subject=" + subject + ", body=" + body + ", senderEmail=" + senderEmail
-				+ ", recipientEmails=" + recipientEmails + ", title=" + title + ", signRequiredBy=" + signRequiredBy
-				+ ", pdfBytes=" + Arrays.toString(pdfBytes) + "]";
+		return "EmailRequest [senderEmail=" + senderEmail + ", recipientEmails=" + recipientEmails + ", title=" + title
+				+ ", signRequiredBy=" + signRequiredBy + ", pdfBytes=" + Arrays.toString(pdfBytes) + "]";
 	}
 
 }
