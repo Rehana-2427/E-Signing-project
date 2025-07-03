@@ -36,7 +36,5 @@ public class DocumentController {
 				senderEmail, signRequiredBy);
 		return new ResponseEntity<Document>(result, HttpStatus.OK);
 	}
-
-	
 	
 }

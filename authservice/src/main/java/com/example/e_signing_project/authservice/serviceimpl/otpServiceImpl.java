@@ -14,42 +14,41 @@ import com.example.e_signing_project.authservice.service.otpService;
 
 @Service
 public class otpServiceImpl implements otpService {
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private EmailClient emailClient;
-	
+
 	private Map<String, Integer> otpStorage = new HashMap<>();
-	
+
 	@Override
 	public int sendingOtp(String userEmail) {
-	    try {
-	        // Generate OTP
-	        Random random = new Random();
-	        int otp = 100000 + random.nextInt(900000);
-	        System.out.println("Generated OTP for " + userEmail + ": " + otp);
-	        otpStorage.put(userEmail, otp);
+		try {
+			// Generate OTP
+			Random random = new Random();
+			int otp = 100000 + random.nextInt(900000);
+			System.out.println("Generated OTP for " + userEmail + ": " + otp);
+			otpStorage.put(userEmail, otp);
 
-	        // Compose Email
-	        String subject = "OTP for Registration";
-	        String body = "<h2>Your OTP is: <strong>" + otp + "</strong></h2>";
+			EmailRequest emailRequest = new EmailRequest();
+			emailRequest.setTo(userEmail);
+			emailRequest.setSubject("OTP for Registration");
+			emailRequest.setTemplateName("otp-email");
 
-	        EmailRequest emailRequest = new EmailRequest();
-	        emailRequest.setTo(userEmail);
-	        emailRequest.setSubject(subject);
-	        emailRequest.setBody(body);
+			Map<String, Object> model = new HashMap<>();
+			model.put("otp", otp);
+			emailRequest.setVariables(model);
+			System.out.println(emailRequest);
+			// Call email-service
+			emailClient.sendEmail(emailRequest);
 
-	        System.out.println(emailRequest);
-	        // Call email-service
-	        emailClient.sendEmail(emailRequest);
+			return otp;
 
-	        return otp;
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return 0;
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 }

@@ -10,6 +10,6 @@ import com.example.e_signing_project.authservice.model.EmailRequest;
 @FeignClient(name = "email-service", path = "/api/email")
 public interface EmailClient {
 
-    @PostMapping("/send")
+    @PostMapping("/sendotp")
     ResponseEntity<String> sendEmail(@RequestBody EmailRequest request);
 }

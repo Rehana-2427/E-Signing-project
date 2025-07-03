@@ -1,6 +1,7 @@
 package com.example.e_signing.email_service.email_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,9 +20,24 @@ public class EmailController {
 	@Autowired
 	private EmailService emailService;
 
-	@PostMapping("/send")
-	public ResponseEntity<String> send(@RequestBody EmailRequest request) {
-		emailService.sendEmail(request.getTo(), request.getSubject(), request.getBody());
+	@PostMapping("/sendotp")
+	public ResponseEntity<String> sendOtp(@RequestBody EmailRequest request) {
+		emailService.sendEmail(request);
 		return ResponseEntity.ok("Email sent to " + request.getTo());
 	}
+
+	@PostMapping("/DocumentEmailSend")
+	public ResponseEntity<String> sendEmails(@RequestBody EmailRequest request) {
+		System.out.println("Email controller");
+		try {
+			System.out.println("Email controller-----2");
+			emailService.sendDocumentEmails(request);
+			
+			return ResponseEntity.ok("Emails sent successfully.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Email sending failed.");
+		}
+	}
+
 }
