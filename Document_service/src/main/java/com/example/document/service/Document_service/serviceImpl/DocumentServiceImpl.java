@@ -1,7 +1,9 @@
 package com.example.document.service.Document_service.serviceImpl;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,9 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import com.example.document.service.Document_service.entity.Document;
+import com.example.document.service.Document_service.entity.Sign_Document;
 import com.example.document.service.Document_service.entity.Signer;
 import com.example.document.service.Document_service.repo.DocumentRepository;
+import com.example.document.service.Document_service.repo.Sign_DocumentRepository;
 import com.example.document.service.Document_service.repo.SignerRepository;
 import com.example.document.service.Document_service.service.DocumentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +29,9 @@ public class DocumentServiceImpl implements DocumentService {
 	
 	@Autowired
 	private SignerRepository signerRepository;
+	
+	@Autowired
+	private Sign_DocumentRepository sign_DocumentRepository;
 
 	@Override
 	public Document saveDocument(String title, String termsType, String termsLink, MultipartFile pdfFile,
@@ -58,6 +66,51 @@ public class DocumentServiceImpl implements DocumentService {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public List<Document> getDocumentByUserEmail(String userEmail) {
+		// TODO Auto-generated method stub
+
+		List<Document> documents=signerRepository.findDocumentsBySignerEmail(userEmail);
+		return documents;
+	}
+
+	@Override
+	public Document findById(Long documentId) {
+		// TODO Auto-generated method stub
+		return documentRepository.getById(documentId);
+	}
+
+	@Override
+	public Sign_Document uploadSignedDocument(MultipartFile file, String senderEmail, String userEmail) {
+		// TODO Auto-generated method stub
+		try {
+		Sign_Document document=new Sign_Document();
+		document.setReceiventEmail(senderEmail);
+		document.setSignerEmail(userEmail);	
+		document.setSignDocument(file.getBytes());
+		Sign_Document save = sign_DocumentRepository.save(document);
+		return save;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		
+	}
+
+	@Override
+	public List<Sign_Document> getSignDocumentByUserEmail(String userEmail) {
+		// TODO Auto-generated method stub
+		return sign_DocumentRepository.getSignDocumentByUserEmail(userEmail) ;
+	}
+
+	@Override
+	public Sign_Document downloadSignDocument(Long id) {
+		 Sign_Document optionalDoc = sign_DocumentRepository.getById(id);	   
+		return optionalDoc;
 	}
 
 	
