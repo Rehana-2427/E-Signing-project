@@ -24,7 +24,7 @@ import com.example.e_signing_project.authservice.service.AuthService;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = { "http://localhost:3003" })
+//@CrossOrigin(origins = { "http://localhost:3003" })
 public class AuthController {
 
 	@Autowired
@@ -71,13 +71,13 @@ public class AuthController {
 		}
 	}
 
-	@GetMapping("/by-email")
-	public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
-		User user = authService.getUserDetailsByEmail(email);
+	@GetMapping("/userNameByEmail")
+	public ResponseEntity<?> getUserByEmail(@RequestParam String userEmail) {
+		User user = authService.getUserDetailsByEmail(userEmail);
 		if (user != null) {
 			return ResponseEntity.ok(user);
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with email: " + email);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with email: " + userEmail);
 		}
 	}
 

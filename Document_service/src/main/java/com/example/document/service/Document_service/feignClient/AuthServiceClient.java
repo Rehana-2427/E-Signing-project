@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.document.service.Document_service.dto.UserDTO;
 
-@FeignClient(name = "authservice") // Must match Eureka registration name
+@FeignClient(name = "authservice") 
 public interface AuthServiceClient {
 
-    @GetMapping("/api/auth/by-email")
-    UserDTO getUserByEmail(@RequestParam String email);
+    @GetMapping("/userNameByEmail")
+    UserDTO getUserByEmail(@RequestParam String userEmail);
 }

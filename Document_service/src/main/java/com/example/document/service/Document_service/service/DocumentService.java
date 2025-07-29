@@ -1,28 +1,49 @@
 package com.example.document.service.Document_service.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.document.service.Document_service.dto.DocumentRequest;
+import com.example.document.service.Document_service.dto.MyConsentResponse;
 import com.example.document.service.Document_service.entity.Document;
-import com.example.document.service.Document_service.entity.Sign_Document;
 
+//
+//import java.time.LocalDate;
+//import java.util.List;
+//
+//import org.springframework.web.multipart.MultipartFile;
+//
+//import com.example.document.service.Document_service.dto.DocumentStatusDTO;
+//import com.example.document.service.Document_service.entity.Document;
+//import com.example.document.service.Document_service.entity.Sign_Document;
+//
 public interface DocumentService {
 
+	Long saveDocument(DocumentRequest data, MultipartFile file) throws IOException;
+//
+//
+//	Document saveDocument(String title, String termsType, String termsLink, MultipartFile pdfFile,
+//			MultipartFile termsPdfFile, String signersJson, String senderEmail, LocalDate signRequiredBy);
+//
+//	List<Document> getDocumentByUserEmail(String userEmail);
+//
+//	Document findById(Long documentId);
+//
+//	Sign_Document uploadSignedDocument(MultipartFile file, String senderEmail, String userEmail);
+//
+//	List<Sign_Document> getSignDocumentByUserEmail(String userEmail);
+//
+//	Sign_Document downloadSignDocument(Long id);
+//
+//	List<DocumentStatusDTO> getDocumentStatusBySender(String senderEmail);
+//
 
-	Document saveDocument(String title, String termsType, String termsLink, MultipartFile pdfFile,
-			MultipartFile termsPdfFile, String signersJson, String senderEmail, LocalDate signRequiredBy);
+	List<MyConsentResponse> getMyConsentsBySender(String senderEmail);
 
-	List<Document> getDocumentByUserEmail(String userEmail);
+	Map<String, String> getDocumentInfo(Long docId, Long sid);
 
-	Document findById(Long documentId);
-
-	Sign_Document uploadSignedDocument(MultipartFile file, String senderEmail, String userEmail);
-
-	List<Sign_Document> getSignDocumentByUserEmail(String userEmail);
-
-	Sign_Document downloadSignDocument(Long id);
-
+	Document getDocumentById(Long documentId);
 }

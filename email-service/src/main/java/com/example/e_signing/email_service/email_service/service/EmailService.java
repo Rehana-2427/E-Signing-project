@@ -11,4 +11,7 @@ public interface EmailService {
 
 
 	public void sendDocumentEmails(EmailRequest request) throws Exception;
+
+
+	public void sendGroupDocumentEmails(EmailRequest request) throws Exception;
 }

@@ -34,14 +34,7 @@ public class otpServiceImpl implements otpService {
 
 			EmailRequest emailRequest = new EmailRequest();
 			emailRequest.setTo(userEmail);
-			emailRequest.setSubject("OTP for Registration");
-			emailRequest.setTemplateName("otp-email");
-
-			Map<String, Object> model = new HashMap<>();
-			model.put("otp", otp);
-			emailRequest.setVariables(model);
-			System.out.println(emailRequest);
-			// Call email-service
+			emailRequest.setOtp(String.valueOf(otp));
 			emailClient.sendEmail(emailRequest);
 
 			return otp;

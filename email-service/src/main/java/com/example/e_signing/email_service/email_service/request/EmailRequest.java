@@ -9,8 +9,11 @@ public class EmailRequest {
 	private String to;
 	private String subject;
 	private String body;
+	private String otp;
+	private String senderName;
 	private String senderEmail;
-	private List<String> recipientEmails;
+//	private List<String> recipientEmails;
+	private List<RecipientToken> recipients;
 	private String title;
 	private LocalDate signRequiredBy;
 	private byte[] pdfBytes;
@@ -39,6 +42,14 @@ public class EmailRequest {
 		this.body = body;
 	}
 
+	public String getSenderName() {
+		return senderName;
+	}
+
+	public void setSenderName(String senderName) {
+		this.senderName = senderName;
+	}
+
 	public String getSenderEmail() {
 		return senderEmail;
 	}
@@ -47,13 +58,13 @@ public class EmailRequest {
 		this.senderEmail = senderEmail;
 	}
 
-	public List<String> getRecipientEmails() {
-		return recipientEmails;
-	}
-
-	public void setRecipientEmails(List<String> recipientEmails) {
-		this.recipientEmails = recipientEmails;
-	}
+//	public List<String> getRecipientEmails() {
+//		return recipientEmails;
+//	}
+//
+//	public void setRecipientEmails(List<String> recipientEmails) {
+//		this.recipientEmails = recipientEmails;
+//	}
 
 	public String getTitle() {
 		return title;
@@ -79,11 +90,27 @@ public class EmailRequest {
 		this.pdfBytes = pdfBytes;
 	}
 
+	public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+
+	public List<RecipientToken> getRecipients() {
+		return recipients;
+	}
+
+	public void setRecipients(List<RecipientToken> recipients) {
+		this.recipients = recipients;
+	}
+
 	@Override
 	public String toString() {
-		return "EmailRequest [to=" + to + ", subject=" + subject + ", body=" + body + ", senderEmail=" + senderEmail
-				+ ", recipientEmails=" + recipientEmails + ", title=" + title + ", signRequiredBy=" + signRequiredBy
-				+ ", pdfBytes=" + Arrays.toString(pdfBytes) + "]";
+		return "EmailRequest [to=" + to + ", subject=" + subject + ", body=" + body + ", otp=" + otp + ", senderName="
+				+ senderName + ", senderEmail=" + senderEmail + ", recipients=" + recipients + ", title=" + title
+				+ ", signRequiredBy=" + signRequiredBy + ", pdfBytes=" + Arrays.toString(pdfBytes) + "]";
 	}
 
 }

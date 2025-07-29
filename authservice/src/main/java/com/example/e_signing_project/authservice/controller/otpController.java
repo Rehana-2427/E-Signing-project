@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.e_signing_project.authservice.service.otpService;
 
-@CrossOrigin(origins = "http://localhost:3003") // <-- must match your React frontend
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/otp")
 public class otpController {
 
 	@Autowired

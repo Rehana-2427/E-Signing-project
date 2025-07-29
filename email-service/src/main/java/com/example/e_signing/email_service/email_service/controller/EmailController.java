@@ -14,7 +14,7 @@ import com.example.e_signing.email_service.email_service.service.EmailService;
 
 @RestController
 @RequestMapping("/api/email")
-@CrossOrigin(origins = { "http://localhost:3003" })
+//@CrossOrigin(origins = { "http://localhost:3003" })
 public class EmailController {
 
 	@Autowired
@@ -23,10 +23,11 @@ public class EmailController {
 	@PostMapping("/sendotp")
 	public ResponseEntity<String> sendOtp(@RequestBody EmailRequest request) {
 		emailService.sendEmail(request);
+		System.out.println("email controller");
 		return ResponseEntity.ok("Email sent to " + request.getTo());
 	}
 
-	@PostMapping("/DocumentEmailSend")
+	@PostMapping("/documentEmailSend")
 	public ResponseEntity<String> sendEmails(@RequestBody EmailRequest request) {
 		System.out.println("Email controller");
 		try {
@@ -39,5 +40,21 @@ public class EmailController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Email sending failed.");
 		}
 	}
+	
+	
+	@PostMapping("/groupDocumentEmailSend")
+	public ResponseEntity<String> sendGroupDocumentEmails(@RequestBody EmailRequest request) {
+		System.out.println("Email controller");
+		try {
+			System.out.println("Email controller-----2");
+			emailService.sendGroupDocumentEmails(request);
+			
+			return ResponseEntity.ok("Emails sent successfully.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Email sending failed.");
+		}
+	}
+	
 
 }

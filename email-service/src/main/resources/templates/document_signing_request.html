@@ -13,10 +13,23 @@
 			<td style="padding: 20px;">
 				<h2 style="color: #007BFF;">📄 Document Signature Request</h2>
 
-				<p>Dear <strong th:text="${recipient}"> [Signer],</strong></p>
+				<p>Dear <strong th:text="${recipientName}"></strong>,</p>
 				<p>You have a new document titled <strong th:text="${title}">[Title]</strong> that requires your
 					signature.</p>
 				<p>Please review and sign it by <strong th:text="${signRequiredBy}">[Date]</strong>.</p>
+				<p>To proceed, please log in to the E-Signature platform using the link below:</p>
+
+				<p style="margin: 20px 0;">
+					<!--	<a href="http://localhost:3003/signtory_login" target="_blank"
+						style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+						🔐 Login to E-Signature Platform
+					</a> -->
+					<a th:href="'http://localhost:3003/signatory_verification?token=' + ${token}" target="_blank"
+						style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+						🔐 Login to E-Signature Platform
+					</a>
+
+				</p>
 				<p>If you have questions, you can reply to <strong th:text="${senderEmail}">[Sender Email]</strong>.</p>
 				<p>Thank you,<br />JobBox Team</p>
 			</td>

@@ -1,27 +1,28 @@
 package com.example.document.service.Document_service.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "signers")
 public class Signer {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String name;
 	private String email;
-	private boolean signed = false;
+
 	@ManyToOne
 	@JoinColumn(name = "document_id")
-	@JsonBackReference
 	private Document document;
+
+	private String signStatus;
+	private LocalDate signedAt;
+
+//	private String token;
 
 	public Long getId() {
 		return id;
@@ -47,14 +48,6 @@ public class Signer {
 		this.email = email;
 	}
 
-	public boolean isSigned() {
-		return signed;
-	}
-
-	public void setSigned(boolean signed) {
-		this.signed = signed;
-	}
-
 	public Document getDocument() {
 		return document;
 	}
@@ -63,10 +56,34 @@ public class Signer {
 		this.document = document;
 	}
 
+	public String getSignStatus() {
+		return signStatus;
+	}
+
+	public void setSignStatus(String signStatus) {
+		this.signStatus = signStatus;
+	}
+
+	public LocalDate getSignedAt() {
+		return signedAt;
+	}
+
+	public void setSignedAt(LocalDate signedAt) {
+		this.signedAt = signedAt;
+	}
+
+//	public String getToken() {
+//		return token;
+//	}
+//
+//	public void setToken(String token) {
+//		this.token = token;
+//	}
+
 	@Override
 	public String toString() {
-		return "Signer [id=" + id + ", name=" + name + ", email=" + email + ", signed=" + signed + ", document="
-				+ document + "]";
+		return "Signer [id=" + id + ", name=" + name + ", email=" + email + ", document=" + document + ", signStatus="
+				+ signStatus + ", signedAt=" + signedAt +  "]";
 	}
 
 }
