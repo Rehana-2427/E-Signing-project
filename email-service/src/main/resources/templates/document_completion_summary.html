@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Document Signed by All</title>
+  <meta charset="UTF-8" />
+</head>
+<body>
+  <p>Hello,	<strong th:text="${senderName}"></strong></p>
+  <strong>The document <strong th:text="${documentTitle}"></strong> has now been signed by all recipients:
+  <strong th:text="${summaryStatus}"></strong>  Progress update goes here</p>
+  <p>Thank you.</p>
+</body>
+</html>

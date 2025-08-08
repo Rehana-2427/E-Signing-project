@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Document Signed Update</title>
+	<meta charset="UTF-8" />
+</head>
+
+<body>
+	<p>
+		Hello,<br />
+		The document - <strong th:text="${documentTitle}"></strong> has been signed by
+		<strong th:text="${currentSignerName}"></strong> (<span th:text="${currentSignerEmail}"></span>).
+	</p>
+
+	<p>
+		This update has been shared with all concerned recipients, including the document sender <strong
+			th:text="${To}"></strong>.
+	</p>
+
+	<p>
+		Signed on: <span th:text="${signedAt}"></span>
+	</p>
+
+	<p>
+		You may now review the document or await further signatures, if required.
+	</p>
+
+	<p>Thank you,<br />JobBox Team</p>
+</body>
+
+</html>

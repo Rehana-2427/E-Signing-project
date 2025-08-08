@@ -17,6 +17,9 @@ public class EmailRequest {
 	private String title;
 	private LocalDate signRequiredBy;
 	private byte[] pdfBytes;
+	private LocalDate signedAt;
+	private String summaryStatus;
+	private Long id;
 
 	public String getTo() {
 		return to;
@@ -104,6 +107,30 @@ public class EmailRequest {
 
 	public void setRecipients(List<RecipientToken> recipients) {
 		this.recipients = recipients;
+	}
+
+	public LocalDate getSignedAt() {
+		return signedAt;
+	}
+
+	public void setSignedAt(LocalDate signedAt) {
+		this.signedAt = signedAt;
+	}
+
+	public String getSummaryStatus() {
+		return summaryStatus;
+	}
+
+	public void setSummaryStatus(String summaryStatus) {
+		this.summaryStatus = summaryStatus;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override

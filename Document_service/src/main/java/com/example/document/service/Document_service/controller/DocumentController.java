@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.document.service.Document_service.dto.DocumentRequest;
+import com.example.document.service.Document_service.dto.EmailRequest;
 import com.example.document.service.Document_service.dto.MyConsentResponse;
 import com.example.document.service.Document_service.entity.Document;
 import com.example.document.service.Document_service.entity.Signer;
@@ -45,15 +47,31 @@ public class DocumentController {
 		return ResponseEntity.ok(myConsents);
 	}
 
-	@GetMapping("/view-document/{documentId}")
-	public ResponseEntity<byte[]> viewDocument(@PathVariable Long documentId) {
-		System.out.println(documentId);
-		Document document = documentService.getDocumentById(documentId);
+	@GetMapping("/drafts")
+	public ResponseEntity<List<MyConsentResponse>> getDraftConsents(@RequestParam String senderEmail) {
+		List<MyConsentResponse> draftConsents = documentService.getDraftConsentsBySender(senderEmail);
+		return ResponseEntity.ok(draftConsents);
+	}
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_PDF);
-		headers.setContentDisposition(ContentDisposition.inline().filename(document.getFileName()).build());
+//	@GetMapping("/view-document/{documentId}")
+//	public ResponseEntity<byte[]> viewDocument(@PathVariable Long documentId) {
+//		System.out.println(documentId);
+//		Document document = documentService.getDocumentById(documentId);
+//
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_PDF);
+//		headers.setContentDisposition(ContentDisposition.inline().filename(document.getFileName()).build());
+//
+//		return ResponseEntity.ok().headers(headers).body(document.getEditedFile());
+//	}
+	@GetMapping("/view-document/{documentId}/{email}")
+	public ResponseEntity<byte[]> viewDocumentForSigner(@PathVariable Long documentId, @PathVariable String email) {
+		return documentService.getDocumentForSigner(documentId, email);
+	}
 
-		return ResponseEntity.ok().headers(headers).body(document.getEditedFile());
+	@PostMapping("/send-reminder")
+	public ResponseEntity<String> sendReminder(@RequestBody EmailRequest request) {
+		documentService.processReminderRequest(request);
+		return ResponseEntity.ok("Reminder email sent");
 	}
 }

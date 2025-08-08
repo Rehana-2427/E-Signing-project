@@ -18,7 +18,8 @@ public class Document {
 	private String fileName;
 
 	private String signingMode;
-	private String additionalInitials;
+	private String on_The_Side;
+	private String on_The_Bottom;
 	private LocalDate deadline;
 
 	private Boolean reminderEveryDay;
@@ -52,7 +53,6 @@ public class Document {
 		this.id = id;
 	}
 
-	
 	public String getSenderName() {
 		return senderName;
 	}
@@ -93,12 +93,20 @@ public class Document {
 		this.signingMode = signingMode;
 	}
 
-	public String getAdditionalInitials() {
-		return additionalInitials;
+	public String getOn_The_Side() {
+		return on_The_Side;
 	}
 
-	public void setAdditionalInitials(String additionalInitials) {
-		this.additionalInitials = additionalInitials;
+	public void setOn_The_Side(String on_The_Side) {
+		this.on_The_Side = on_The_Side;
+	}
+
+	public String getOn_The_Bottom() {
+		return on_The_Bottom;
+	}
+
+	public void setOn_The_Bottom(String on_The_Bottom) {
+		this.on_The_Bottom = on_The_Bottom;
 	}
 
 	public LocalDate getDeadline() {
@@ -205,7 +213,6 @@ public class Document {
 		this.draft = draft;
 	}
 
-	
 	public LocalDate getCreatedDate() {
 		return createdDate;
 	}
@@ -216,15 +223,15 @@ public class Document {
 
 	@Override
 	public String toString() {
-		return "Document [id=" + id + ", documentName=" + documentName + ", description=" + description + ", fileName="
-				+ fileName + ", signingMode=" + signingMode + ", additionalInitials=" + additionalInitials
-				+ ", deadline=" + deadline + ", reminderEveryDay=" + reminderEveryDay + ", reminderDaysBeforeEnabled="
-				+ reminderDaysBeforeEnabled + ", reminderDaysBefore=" + reminderDaysBefore + ", reminderLastDay="
-				+ reminderLastDay + ", senderEmail=" + senderEmail + ", sendFinalCopy=" + sendFinalCopy
-				+ ", documentCharge=" + documentCharge + ", signatoryCharge=" + signatoryCharge + ", totalCredits="
-				+ totalCredits + ", draft=" + draft + ", editedFile=" + Arrays.toString(editedFile) + ", signers="
-				+ signers + "]";
+		return "Document [id=" + id + ", senderName=" + senderName + ", documentName=" + documentName + ", description="
+				+ description + ", fileName=" + fileName + ", signingMode=" + signingMode + ", on_The_Side="
+				+ on_The_Side + ", on_The_Bottom=" + on_The_Bottom + ", deadline=" + deadline + ", reminderEveryDay="
+				+ reminderEveryDay + ", reminderDaysBeforeEnabled=" + reminderDaysBeforeEnabled
+				+ ", reminderDaysBefore=" + reminderDaysBefore + ", reminderLastDay=" + reminderLastDay
+				+ ", senderEmail=" + senderEmail + ", sendFinalCopy=" + sendFinalCopy + ", documentCharge="
+				+ documentCharge + ", signatoryCharge=" + signatoryCharge + ", totalCredits=" + totalCredits
+				+ ", draft=" + draft + ", editedFile=" + Arrays.toString(editedFile) + ", createdDate=" + createdDate
+				+ ", signers=" + signers + "]";
 	}
 
-	
 }

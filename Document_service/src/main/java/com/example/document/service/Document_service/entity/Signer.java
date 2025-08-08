@@ -1,6 +1,7 @@
 package com.example.document.service.Document_service.entity;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import jakarta.persistence.*;
 
@@ -21,6 +22,9 @@ public class Signer {
 
 	private String signStatus;
 	private LocalDate signedAt;
+	
+	@Lob
+	private byte[] signed_file;
 
 //	private String token;
 
@@ -72,6 +76,7 @@ public class Signer {
 		this.signedAt = signedAt;
 	}
 
+	
 //	public String getToken() {
 //		return token;
 //	}
@@ -80,10 +85,20 @@ public class Signer {
 //		this.token = token;
 //	}
 
+	public byte[] getSigned_file() {
+		return signed_file;
+	}
+
+	public void setSigned_file(byte[] signed_file) {
+		this.signed_file = signed_file;
+	}
+
 	@Override
 	public String toString() {
 		return "Signer [id=" + id + ", name=" + name + ", email=" + email + ", document=" + document + ", signStatus="
-				+ signStatus + ", signedAt=" + signedAt +  "]";
+				+ signStatus + ", signedAt=" + signedAt + ", signed_file=" + Arrays.toString(signed_file) + "]";
 	}
+
+	
 
 }

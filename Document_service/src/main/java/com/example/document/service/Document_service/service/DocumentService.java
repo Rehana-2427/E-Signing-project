@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.document.service.Document_service.dto.DocumentRequest;
+import com.example.document.service.Document_service.dto.EmailRequest;
 import com.example.document.service.Document_service.dto.MyConsentResponse;
 import com.example.document.service.Document_service.entity.Document;
 
@@ -46,4 +48,10 @@ public interface DocumentService {
 	Map<String, String> getDocumentInfo(Long docId, Long sid);
 
 	Document getDocumentById(Long documentId);
+
+	ResponseEntity<byte[]> getDocumentForSigner(Long documentId, String email);
+
+	List<MyConsentResponse> getDraftConsentsBySender(String senderEmail);
+
+	void processReminderRequest(EmailRequest request);
 }

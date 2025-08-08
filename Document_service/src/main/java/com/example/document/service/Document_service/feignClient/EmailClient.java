@@ -16,4 +16,16 @@ public interface EmailClient {
 	@PostMapping("/groupDocumentEmailSend")
 	void sendGroupDocumentSigningRequestEmail(EmailRequest emailRequest);
 
+	@PostMapping("/sendUpdateStatusEmail")
+	void sendUpdateStatusEmail(EmailRequest emailRequest);
+
+	@PostMapping("/sendSummaryEmail")
+	void sendSummaryEmail(EmailRequest payload);
+
+	@PostMapping("/sendUpdateStatusEmailToAll")
+	void sendUpdateStatusEmailToAll(EmailRequest emailRequest);
+
+	@PostMapping("/send-reminder")
+	void sendReminder(EmailRequest request);
+
 }

@@ -10,7 +10,8 @@ public class DocumentRequest {
 	private String description;
 	private String fileName;
 	private String signingMode;
-	private String additionalInitials;
+	private String on_The_Side;
+	private String on_The_Bottom;
 	private LocalDate deadline;
 	private Boolean reminderEveryDay;
 	private Boolean reminderDaysBeforeEnabled;
@@ -32,7 +33,6 @@ public class DocumentRequest {
 		this.senderEmail = senderEmail;
 	}
 
-	
 	public String getSenderName() {
 		return senderName;
 	}
@@ -73,12 +73,20 @@ public class DocumentRequest {
 		this.signingMode = signingMode;
 	}
 
-	public String getAdditionalInitials() {
-		return additionalInitials;
+	public String getOn_The_Side() {
+		return on_The_Side;
 	}
 
-	public void setAdditionalInitials(String additionalInitials) {
-		this.additionalInitials = additionalInitials;
+	public void setOn_The_Side(String on_The_Side) {
+		this.on_The_Side = on_The_Side;
+	}
+
+	public String getOn_The_Bottom() {
+		return on_The_Bottom;
+	}
+
+	public void setOn_The_Bottom(String on_The_Bottom) {
+		this.on_The_Bottom = on_The_Bottom;
 	}
 
 	public LocalDate getDeadline() {
@@ -171,13 +179,14 @@ public class DocumentRequest {
 
 	@Override
 	public String toString() {
-		return "DocumentRequest [documentName=" + documentName + ", description=" + description + ", fileName="
-				+ fileName + ", signingMode=" + signingMode + ", additionalInitials=" + additionalInitials
-				+ ", deadline=" + deadline + ", reminderEveryDay=" + reminderEveryDay + ", reminderDaysBeforeEnabled="
+		return "DocumentRequest [senderEmail=" + senderEmail + ", senderName=" + senderName + ", documentName="
+				+ documentName + ", description=" + description + ", fileName=" + fileName + ", signingMode="
+				+ signingMode + ", on_The_Side=" + on_The_Side + ", on_The_Bottom=" + on_The_Bottom + ", deadline="
+				+ deadline + ", reminderEveryDay=" + reminderEveryDay + ", reminderDaysBeforeEnabled="
 				+ reminderDaysBeforeEnabled + ", reminderDaysBefore=" + reminderDaysBefore + ", reminderLastDay="
-				+ reminderLastDay + ", sendFinalCopy=" + sendFinalCopy + ", documentCharge=" + documentCharge
-				+ ", signatoryCharge=" + signatoryCharge + ", totalCredits=" + totalCredits + ", signers=" + signers
-				+ "]";
+				+ reminderLastDay + ", sendFinalCopy=" + sendFinalCopy + ", draft=" + draft + ", documentCharge="
+				+ documentCharge + ", signatoryCharge=" + signatoryCharge + ", totalCredits=" + totalCredits
+				+ ", signers=" + signers + "]";
 	}
 
 }

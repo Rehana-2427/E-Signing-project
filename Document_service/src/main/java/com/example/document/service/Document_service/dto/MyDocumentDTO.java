@@ -9,15 +9,17 @@ public class MyDocumentDTO {
 	private LocalDate createdDate;
 	private LocalDate signedAt;
 	private String signStatus;
+	private byte[] signedFile; 
 
 	public MyDocumentDTO(Long documentId, String documentName, LocalDate createdDate, LocalDate signedAt,
-			String signStatus) {
+			String signStatus, byte[] signedFile) {
 		super();
 		this.documentId = documentId;
 		this.documentName = documentName;
 		this.createdDate = createdDate;
 		this.signedAt = signedAt;
 		this.signStatus = signStatus;
+		this.signedFile = signedFile;
 	}
 
 	public Long getDocumentId() {
@@ -58,6 +60,14 @@ public class MyDocumentDTO {
 
 	public void setSignStatus(String signStatus) {
 		this.signStatus = signStatus;
+	}
+
+	public byte[] getSignedFile() {
+		return signedFile;
+	}
+
+	public void setSignedFile(byte[] signedFile) {
+		this.signedFile = signedFile;
 	}
 
 }
