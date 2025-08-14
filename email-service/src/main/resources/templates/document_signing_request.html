@@ -20,15 +20,10 @@
 				<p>To proceed, please log in to the E-Signature platform using the link below:</p>
 
 				<p style="margin: 20px 0;">
-					<!--	<a href="http://localhost:3003/signtory_login" target="_blank"
-						style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
-						🔐 Login to E-Signature Platform
-					</a> -->
-					<a th:href="'http://localhost:3003/signatory_verification?token=' + ${token}" target="_blank"
+					<a th:href="${loginUrl}" target="_blank"
 						style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
 						🔐 Login to E-Signature Platform
 					</a>
-
 				</p>
 				<p>If you have questions, you can reply to <strong th:text="${senderEmail}">[Sender Email]</strong>.</p>
 				<p>Thank you,<br />JobBox Team</p>

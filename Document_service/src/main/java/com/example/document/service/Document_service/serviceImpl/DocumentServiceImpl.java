@@ -240,41 +240,35 @@ public class DocumentServiceImpl implements DocumentService {
 
 	@Override
 	public void processReminderRequest(EmailRequest request) {
-	    // 1. Fetch document by ID
-	    Document document = documentRepository.findById(request.getId())
-	        .orElseThrow(() -> new RuntimeException("Document not found."));
+		// 1. Fetch document by ID
+		Document document = documentRepository.findById(request.getId())
+				.orElseThrow(() -> new RuntimeException("Document not found."));
 
-	    // 2. Generate JWT tokens for each recipient
-	    List<RecipientToken> recipientTokens = request.getRecipients().stream()
-	        .map(recipient -> {
-	            String token = JwtUtil.generateToken(
-	                document.getSenderName(),
-	                document.getDocumentName(),
-	                recipient.getEmail(),
-	                document.getId(),
-	                java.sql.Date.valueOf(document.getDeadline())
-	            );
+		// 2. Generate JWT tokens for each recipient
+		List<RecipientToken> recipientTokens = request.getRecipients().stream().map(recipient -> {
+			String token = JwtUtil.generateToken(document.getSenderName(), document.getDocumentName(),
+					recipient.getEmail(), document.getId(), java.sql.Date.valueOf(document.getDeadline()));
 
-	            return new RecipientToken(
-	                recipient.getName(),
-	                recipient.getEmail(),
-	                document.getId(),
-	                token
-	            );
-	        })
-	        .collect(Collectors.toList());
+			return new RecipientToken(recipient.getName(), recipient.getEmail(), document.getId(), token);
+		}).collect(Collectors.toList());
 
-	    // 3. Update request with enriched tokens
-	    request.setRecipients(recipientTokens);
-	    request.setTitle(document.getDocumentName());
-	    request.setSignRequiredBy(document.getDeadline());
-	    request.setSenderName(document.getSenderName());
-	    request.setSenderEmail(document.getSenderEmail());
-	    request.setPdfBytes(document.getEditedFile());
+		// 3. Update request with enriched tokens
+		request.setRecipients(recipientTokens);
+		request.setTitle(document.getDocumentName());
+		request.setSignRequiredBy(document.getDeadline());
+		request.setSenderName(document.getSenderName());
+		request.setSenderEmail(document.getSenderEmail());
+		request.setPdfBytes(document.getEditedFile());
 
-	    // 4. Call email-service via FeignClient
-	    emailClient.sendReminder(request);
+		// 4. Call email-service via FeignClient
+		emailClient.sendReminder(request);
 	}
 
+	@Override
+	public Integer getTotalCreditsBySenderEmail(String senderEmail) {
+		// TODO Auto-generated method stub
+		Integer sum = documentRepository.getTotalCreditsBySenderEmail(senderEmail);
+		return sum != null ? sum : 0;
+	}
 
 }

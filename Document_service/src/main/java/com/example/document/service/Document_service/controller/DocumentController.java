@@ -53,6 +53,12 @@ public class DocumentController {
 		return ResponseEntity.ok(draftConsents);
 	}
 
+	@GetMapping("/total-credits")
+	public ResponseEntity<Integer> getTotalCreditsBySenderEmail(@RequestParam String senderEmail) {
+		Integer totalCredits = documentService.getTotalCreditsBySenderEmail(senderEmail);
+		return ResponseEntity.ok(totalCredits);
+	}
+
 //	@GetMapping("/view-document/{documentId}")
 //	public ResponseEntity<byte[]> viewDocument(@PathVariable Long documentId) {
 //		System.out.println(documentId);

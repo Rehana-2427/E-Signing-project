@@ -54,4 +54,6 @@ public interface DocumentService {
 	List<MyConsentResponse> getDraftConsentsBySender(String senderEmail);
 
 	void processReminderRequest(EmailRequest request);
+
+	Integer getTotalCreditsBySenderEmail(String senderEmail);
 }

@@ -28,18 +28,18 @@ public class CreditSettingsServiceImpl implements CreditSettingsService {
 	}
 
 	@Override
-	@Cacheable("creditHistory")
+//	@Cacheable("creditHistory")
 	public List<CreditSettings> getAllSettings() {
 		// TODO Auto-generated method stub
 		System.out.println("Fetching from DB...");
 		return creditSettingsRepository.findAllByOrderByUpdatedAtDescIdDesc();
 
 	}
-
-	@CacheEvict(value = "creditHistory", allEntries = true)
-	public void updateCreditSettings(CreditSettings newSetting) {
-		creditSettingsRepository.save(newSetting);
-	}
+//
+//	@CacheEvict(value = "creditHistory", allEntries = true)
+//	public void updateCreditSettings(CreditSettings newSetting) {
+//		creditSettingsRepository.save(newSetting);
+//	}
 
 	@Override
 	public CreditSettings getCurrentSettings() {

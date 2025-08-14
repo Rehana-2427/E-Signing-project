@@ -26,19 +26,17 @@ public class otpServiceImpl implements otpService {
 	@Override
 	public int sendingOtp(String userEmail) {
 		try {
-			// Generate OTP
 			Random random = new Random();
 			int otp = 100000 + random.nextInt(900000);
 			System.out.println("Generated OTP for " + userEmail + ": " + otp);
 			otpStorage.put(userEmail, otp);
-
-			EmailRequest emailRequest = new EmailRequest();
-			emailRequest.setTo(userEmail);
-			emailRequest.setOtp(String.valueOf(otp));
-			emailClient.sendEmail(emailRequest);
-
+			EmailRequest otpRequest = new EmailRequest();
+			otpRequest.setTo(userEmail);
+			otpRequest.setOtp(String.valueOf(otp));
+			System.out.println("emailclient");
+			emailClient.sendEmail(otpRequest);
+			
 			return otp;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0;

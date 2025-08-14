@@ -1,6 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Email Verification</title>
+	<style>
+		.container {
+			font-family: Arial, sans-serif;
+			padding: 20px;
+			background-color: #f4f4f4;
+			color: #333;
+			max-width: 600px;
+			margin: auto;
+			border-radius: 8px;
+			border: 1px solid #ddd;
+		}
+
+		.header {
+			text-align: center;
+			background-color: #4CAF50;
+			color: white;
+			padding: 10px 0;
+			border-radius: 8px 8px 0 0;
+		}
+
+		.otp-box {
+			font-size: 24px;
+			font-weight: bold;
+			color: #4CAF50;
+			margin: 20px 0;
+			text-align: center;
+		}
+
+		.footer {
+			margin-top: 30px;
+			font-size: 12px;
+			text-align: center;
+			color: #777;
+		}
+	</style>
+</head>
+
 <body>
-    <h2>Your OTP is: <strong th:text="${otp}"></strong></h2>
+	<div class="container">
+		<div class="header">
+			<h2>Email Verification</h2>
+		</div>
+		<p>Hi <span th:text="${to}"></span>,</p>
+		<p> This OTP is valid for the next 10 minutes. Please do not share this code with anyone. Please use the
+			following OTP to verify your email address:</p>
+		<div class="otp-box">
+			<span th:text="${otp}"></span>
+		</div>
+
+		<div class="footer">
+			&copy; 2025 Jobbox. All rights reserved.
+		</div>
+	</div>
 </body>
+
 </html>

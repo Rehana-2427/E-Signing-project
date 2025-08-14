@@ -30,13 +30,11 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
 	@Override
 	public String registerUser(RegisterRequest request) {
-		// TODO Auto-generated method stub
 		String email = request.getUserEmail();
 		User existingUser = userRepository.findByUserEmail(email);
 		if (existingUser != null) {
 			throw new EmailAlreadyExistsException("Email already exists");
 		}
-
 		String plainTextPassword = request.getPassword();
 		String hashedPassword = bCryptPasswordEncoder.encode(plainTextPassword);
 		User user = new User();

@@ -9,11 +9,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtUtil {
-	// Get the dynamically generated secret key
 	private final static String SECRET_KEY = SecretKeyGeneratorExample.generateSecretKey();
 
-	//private final int EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
-	private final static int EXPIRATION_TIME = 1000 * 60 * 60 * 6; // 6 hours
+	private final static int EXPIRATION_TIME = 1000 * 60 * 60 * 6;
 
 	public static String generateToken(String email) {
 		return Jwts.builder().setSubject(email).setIssuedAt(new Date(System.currentTimeMillis()))

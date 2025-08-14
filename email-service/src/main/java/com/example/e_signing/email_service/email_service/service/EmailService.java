@@ -3,7 +3,6 @@ package com.example.e_signing.email_service.email_service.service;
 import org.springframework.stereotype.Service;
 
 import com.example.e_signing.email_service.email_service.request.EmailRequest;
-import com.example.e_signing.email_service.email_service.request.ReminderRequest;
 
 import jakarta.mail.MessagingException;
 

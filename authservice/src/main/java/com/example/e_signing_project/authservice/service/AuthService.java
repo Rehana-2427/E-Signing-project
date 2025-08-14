@@ -1,7 +1,5 @@
 package com.example.e_signing_project.authservice.service;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import com.example.e_signing_project.authservice.dto.RegisterRequest;

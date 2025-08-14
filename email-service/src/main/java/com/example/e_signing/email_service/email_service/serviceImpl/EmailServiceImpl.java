@@ -13,7 +13,6 @@ import org.thymeleaf.context.Context;
 
 import com.example.e_signing.email_service.email_service.request.EmailRequest;
 import com.example.e_signing.email_service.email_service.request.RecipientToken;
-import com.example.e_signing.email_service.email_service.request.ReminderRequest;
 import com.example.e_signing.email_service.email_service.service.EmailService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -41,19 +40,12 @@ public class EmailServiceImpl implements EmailService {
 		try {
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-
+			System.out.println("Preparing email for: " + emailRequest.getTo());
+			System.out.println("Using OTP: " + emailRequest.getOtp());
 			helper.setFrom(username);
 			helper.setTo(emailRequest.getTo());
 			helper.setSubject("Email Verification");
 			String htmlBody;
-
-//			if (emailRequest.getTemplateName() != null && !emailRequest.getTemplateName().isEmpty()) {
-//				Context context = new Context();
-//				context.setVariables(emailRequest.getVariables());
-//				htmlBody = templateEngine.process(emailRequest.getTemplateName(), context);
-//			} else {
-//				htmlBody = emailRequest.getBody(); // fallback
-//			}
 
 			// Prepare HTML content using Thymeleaf
 			Context context = new Context();
@@ -62,7 +54,7 @@ public class EmailServiceImpl implements EmailService {
 
 			String htmlContent = templateEngine.process("otp-email.html", context);
 			helper.setText(htmlContent, true);
-//			helper.setText(htmlBody, true);
+			System.out.println("calling html");
 			mailSender.send(mimeMessage);
 
 		} catch (MessagingException e) {
@@ -73,10 +65,7 @@ public class EmailServiceImpl implements EmailService {
 
 	@Override
 	public void sendDocumentEmails(EmailRequest request) throws Exception {
-		// TODO Auto-generated method stub
-//		for (String recipient : request.getRecipientEmails()) {
-//			sendIndividualEmail(request, recipient);
-//		}
+
 		for (RecipientToken recipient : request.getRecipients()) {
 			sendIndividualEmail(request, recipient);
 		}
@@ -95,7 +84,14 @@ public class EmailServiceImpl implements EmailService {
 
 		helper.setSubject("Action Required: Sign Document - " + request.getTitle());
 
-		// Prepare HTML content using Thymeleaf
+		String baseUrl;
+		String activeProfile = System.getProperty("spring.profiles.active", "live"); 
+		if ("dev".equalsIgnoreCase(activeProfile)) {
+			baseUrl = "http://localhost:3003";
+		} else {
+			baseUrl = "http://51.79.18.21:3003";
+		}
+		String loginUrl = baseUrl + "/signatory_verification?token=" + recipient.getToken();
 		Context context = new Context();
 		context.setVariable("recipientEmail", recipient);
 		context.setVariable("title", request.getTitle());
@@ -104,6 +100,7 @@ public class EmailServiceImpl implements EmailService {
 		context.setVariable("senderName", request.getSenderName());
 		context.setVariable("recipientName", recipient.getName());
 		context.setVariable("token", recipient.getToken());
+		context.setVariable("loginUrl", loginUrl);
 		String htmlContent = templateEngine.process("document_signing_request.html", context);
 		helper.setText(htmlContent, true);
 
@@ -216,7 +213,8 @@ public class EmailServiceImpl implements EmailService {
 
 	}
 
-	private void sendRemainderEmailsToAllsigners(EmailRequest request, RecipientToken recipient) throws MessagingException {
+	private void sendRemainderEmailsToAllsigners(EmailRequest request, RecipientToken recipient)
+			throws MessagingException {
 		// TODO Auto-generated method stub
 		System.out.println("remainder email");
 		MimeMessage message = mailSender.createMimeMessage();
@@ -235,7 +233,7 @@ public class EmailServiceImpl implements EmailService {
 		context.setVariable("senderName", request.getSenderName());
 		context.setVariable("signBy", request.getSignRequiredBy());
 		context.setVariable("token", recipient.getToken());
-        String htmlContent = templateEngine.process("reminder-email.html", context);
+		String htmlContent = templateEngine.process("reminder-email.html", context);
 		helper.setText(htmlContent, true); // HTML enabled
 		mailSender.send(message);
 	}
