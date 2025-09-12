@@ -1,6 +1,8 @@
 package com.example.e_signing.email_service.email_service.serviceImpl;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.example.e_signing.email_service.email_service.request.EmailCreditResponse;
 import com.example.e_signing.email_service.email_service.request.EmailRequest;
 import com.example.e_signing.email_service.email_service.request.RecipientToken;
+import com.example.e_signing.email_service.email_service.request.ReportRequestDto;
 import com.example.e_signing.email_service.email_service.service.EmailService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -85,7 +89,7 @@ public class EmailServiceImpl implements EmailService {
 		helper.setSubject("Action Required: Sign Document - " + request.getTitle());
 
 		String baseUrl;
-		String activeProfile = System.getProperty("spring.profiles.active", "live"); 
+		String activeProfile = System.getProperty("spring.profiles.active", "live");
 		if ("dev".equalsIgnoreCase(activeProfile)) {
 			baseUrl = "http://localhost:3003";
 		} else {
@@ -197,8 +201,9 @@ public class EmailServiceImpl implements EmailService {
 
 		Context ctx = new Context();
 		ctx.setVariable("documentTitle", req.getTitle());
+		ctx.setVariable("signers", req.getSigners());
 		ctx.setVariable("summaryStatus", req.getSummaryStatus());
-
+		ctx.setVariable("senderEmail", req.getSenderEmail());
 		String html = templateEngine.process("document_completion_summary.html", ctx);
 		helper.setText(html, true);
 		mailSender.send(msg);
@@ -238,6 +243,65 @@ public class EmailServiceImpl implements EmailService {
 		mailSender.send(message);
 	}
 
+	@Override
+	public void sendAssignedCreditsEmail(EmailCreditResponse request) {
+		try {
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+
+			Context context = new Context();
+			context.setVariable("userName", request.getUserName());
+			context.setVariable("creditsAssigned", request.getCreditsAssigned());
+			context.setVariable("balance", request.getBalance());
+
+			String htmlContent = templateEngine.process("assigned-credits-template.html", context);
+
+			helper.setTo(request.getTo());
+			helper.setSubject("Credits Assigned Notification");
+			helper.setText(htmlContent, true);
+			helper.setFrom(username); // Your SMTP sender email
+
+			mailSender.send(message);
+
+		} catch (MessagingException e) {
+			throw new RuntimeException("Failed to send assigned credits email", e);
+		}
+
+	}
+
+	@Override
+	public void sendReportToSignersAndSender(ReportRequestDto report) {
+		Context context = new Context();
+		context.setVariable("documentName", report.getDocumentName());
+		context.setVariable("signerList", report.getSignerList());
+
+		String htmlContent = templateEngine.process("signing-report", context);
+
+		List<String> recipientEmails = report.getSignerList().stream().map(ReportRequestDto.SignerInfo::getEmail)
+				.collect(Collectors.toList());
+
+		recipientEmails.add(report.getSenderEmail());
+
+		for (String email : recipientEmails) {
+			sendHtmlEmail(email, "Document Signing Report", htmlContent);
+		}
+
+	}
+
+	private void sendHtmlEmail(String to, String subject, String htmlContent) {
+		try {
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(htmlContent, true);
+
+			mailSender.send(message);
+		} catch (MessagingException e) {
+			throw new RuntimeException("Failed to send email to " + to, e);
+		}
+	}
 //	@Override
 //	public void sendGroupDocumentEmails(EmailRequest request) throws Exception {
 //		MimeMessage message = mailSender.createMimeMessage();

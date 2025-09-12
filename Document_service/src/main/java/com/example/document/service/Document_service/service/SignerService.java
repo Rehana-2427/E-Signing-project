@@ -21,5 +21,7 @@ public interface SignerService {
 
 	List<SignerStatusResponse> getSignerStatusForDocument(Long documentId);
 
+	List<MyDocumentDTO> getCompletedDocumentsByEmail(String email);
+
 
 }

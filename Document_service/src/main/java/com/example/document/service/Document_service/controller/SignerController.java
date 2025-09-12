@@ -47,6 +47,16 @@ public class SignerController {
 		}
 	}
 
+	
+	@GetMapping("/completedDocs")
+	public ResponseEntity<List<MyDocumentDTO>> getCompletedDocumentsByEmail(@RequestParam String email) {
+		try {
+			List<MyDocumentDTO> documents = signerService.getCompletedDocumentsByEmail(email);
+			return ResponseEntity.ok(documents);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 	@GetMapping("/signersContact")
 	public List<SignersContact> getSigners(@RequestParam String senderEmail) {
 		return signerService.getSignerStats(senderEmail);

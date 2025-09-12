@@ -19,6 +19,8 @@ public class EmailRequest {
 
 	private List<RecipientToken> recipients;
 
+	private List<SignerInfo> signers;
+
 	public String getSenderEmail() {
 		return senderEmail;
 	}
@@ -105,6 +107,14 @@ public class EmailRequest {
 
 	public void setId(Long id) {
 		Id = id;
+	}
+
+	public List<SignerInfo> getSigners() {
+		return signers;
+	}
+
+	public void setSigners(List<SignerInfo> signers) {
+		this.signers = signers;
 	}
 
 	@Override

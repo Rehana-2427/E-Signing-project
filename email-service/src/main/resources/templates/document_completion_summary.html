@@ -1,13 +1,44 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Document Signed by All</title>
+  <title>Document Signing Completion Report</title>
   <meta charset="UTF-8" />
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
 </head>
 <body>
-  <p>Hello,	<strong th:text="${senderName}"></strong></p>
-  <strong>The document <strong th:text="${documentTitle}"></strong> has now been signed by all recipients:
-  <strong th:text="${summaryStatus}"></strong>  Progress update goes here</p>
+  <p>Hello,</p>
+  <p>The document <strong th:text="${documentTitle}"></strong> has been signed by all recipients.</p>
+  <p>Signing progress summary:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Signer Name</th>
+        <th>Signer Email</th>
+        <th>Signed At</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="signer : ${signers}">
+        <td th:text="${signer.name}"></td>
+        <td th:text="${signer.email}"></td>
+        <td th:text="${signer.signedAt}"></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Sent by: <strong th:text="${senderEmail}"></strong></p>
   <p>Thank you.</p>
 </body>
 </html>

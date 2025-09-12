@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.document.service.Document_service.dto.AuditTrailResponseDto;
 import com.example.document.service.Document_service.dto.DocumentRequest;
 import com.example.document.service.Document_service.dto.EmailRequest;
 import com.example.document.service.Document_service.dto.MyConsentResponse;
@@ -56,4 +57,9 @@ public interface DocumentService {
 	void processReminderRequest(EmailRequest request);
 
 	Integer getTotalCreditsBySenderEmail(String senderEmail);
+
+	void checkAndSendReportIfAllSigned(Long documentId);
+
+
+	AuditTrailResponseDto getAuditTrailByDocumentId(Long documentId);
 }

@@ -6,9 +6,6 @@ public class RecipientToken {
 	private Long id;
 	private String token;
 
-	
-	
-
 
 	public RecipientToken(String name, String email, Long id, String token) {
 		super();

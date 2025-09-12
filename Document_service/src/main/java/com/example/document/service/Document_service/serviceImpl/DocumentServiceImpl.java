@@ -25,16 +25,21 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.document.service.Document_service.ExceptionHandler.DocumentNotFoundException;
+import com.example.document.service.Document_service.dto.AuditTrailResponseDto;
 import com.example.document.service.Document_service.dto.DocumentRequest;
 import com.example.document.service.Document_service.dto.EmailRequest;
 import com.example.document.service.Document_service.dto.MyConsentResponse;
 import com.example.document.service.Document_service.dto.RecipientToken;
+import com.example.document.service.Document_service.dto.ReportRequestDto;
+import com.example.document.service.Document_service.dto.SignerInfo;
 import com.example.document.service.Document_service.dto.SignerRequest;
 import com.example.document.service.Document_service.dto.UserDTO;
 import com.example.document.service.Document_service.entity.Document;
@@ -269,6 +274,55 @@ public class DocumentServiceImpl implements DocumentService {
 		// TODO Auto-generated method stub
 		Integer sum = documentRepository.getTotalCreditsBySenderEmail(senderEmail);
 		return sum != null ? sum : 0;
+	}
+
+	@Override
+	public void checkAndSendReportIfAllSigned(Long documentId) {
+		long unsignedCount = signerRepository.countUnsignedSigners(documentId);
+
+		if (unsignedCount == 0) {
+			Document document = documentRepository.findById(documentId)
+					.orElseThrow(() -> new RuntimeException("Document not found"));
+
+			List<Signer> signers = signerRepository.findByDocumentId(documentId);
+
+			ReportRequestDto reportRequest = new ReportRequestDto();
+			reportRequest.setDocumentName(document.getDocumentName());
+			reportRequest.setSenderEmail(document.getSenderEmail());
+
+			List<ReportRequestDto.SignerInfo> signerInfoList = signers.stream().map(signer -> {
+				ReportRequestDto.SignerInfo info = new ReportRequestDto.SignerInfo();
+				info.setName(signer.getName());
+				info.setEmail(signer.getEmail());
+				info.setSignedAt(signer.getSignedAt());
+				return info;
+			}).collect(Collectors.toList());
+
+			reportRequest.setSignerList(signerInfoList);
+
+			emailClient.sendSigningReport(reportRequest);
+		}
+
+	}
+
+	public AuditTrailResponseDto getAuditTrailByDocumentId(Long documentId) {
+		Document doc = documentRepository.findById(documentId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Document not found"));
+
+		List<Signer> signers = doc.getSigners();
+
+		List<SignerInfo> signerDtos = signers.stream()
+				.map(s -> new SignerInfo(s.getName(), s.getEmail(), s.getSignedAt(), s.getSignStatus()))
+				.collect(Collectors.toList());
+
+		boolean allCompleted = signers.stream()
+				.allMatch(s -> s.getSignStatus() != null && s.getSignStatus().equalsIgnoreCase("completed"));
+
+		AuditTrailResponseDto response = new AuditTrailResponseDto();
+		response.setDocumentName(doc.getDocumentName());
+		response.setSigners(signerDtos);
+		response.setAllCompleted(allCompleted);
+		return response;
 	}
 
 }

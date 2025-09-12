@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.example.document.service.Document_service.dto.AuditTrailResponseDto;
 import com.example.document.service.Document_service.dto.DocumentRequest;
 import com.example.document.service.Document_service.dto.EmailRequest;
 import com.example.document.service.Document_service.dto.MyConsentResponse;
@@ -79,5 +81,17 @@ public class DocumentController {
 	public ResponseEntity<String> sendReminder(@RequestBody EmailRequest request) {
 		documentService.processReminderRequest(request);
 		return ResponseEntity.ok("Reminder email sent");
+	}
+
+	@PostMapping("/{documentId}/check-and-send-report")
+	public ResponseEntity<String> checkAndSendReport(@PathVariable Long documentId) {
+		documentService.checkAndSendReportIfAllSigned(documentId);
+		return ResponseEntity.ok("Report check initiated");
+	}
+
+	@GetMapping("/signers")
+	public ResponseEntity<AuditTrailResponseDto> getAuditTrail(@RequestParam("documentId") Long documentId) {
+		AuditTrailResponseDto dto = documentService.getAuditTrailByDocumentId(documentId);
+		return ResponseEntity.ok(dto);
 	}
 }

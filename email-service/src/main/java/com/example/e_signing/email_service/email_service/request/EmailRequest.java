@@ -20,6 +20,7 @@ public class EmailRequest {
 	private LocalDate signedAt;
 	private String summaryStatus;
 	private Long id;
+	private List<SignerInfo> signers;
 
 	public String getTo() {
 		return to;
@@ -131,6 +132,14 @@ public class EmailRequest {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public List<SignerInfo> getSigners() {
+		return signers;
+	}
+
+	public void setSigners(List<SignerInfo> signers) {
+		this.signers = signers;
 	}
 
 	@Override

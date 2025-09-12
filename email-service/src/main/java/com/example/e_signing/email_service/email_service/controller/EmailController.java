@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.e_signing.email_service.email_service.request.EmailCreditResponse;
 import com.example.e_signing.email_service.email_service.request.EmailRequest;
+import com.example.e_signing.email_service.email_service.request.ReportRequestDto;
 import com.example.e_signing.email_service.email_service.service.EmailService;
 
 import jakarta.mail.MessagingException;
@@ -87,5 +89,20 @@ public class EmailController {
 		emailService.sendReminderEmail(request);
 		return ResponseEntity.ok("Reminder email sent");
 	}
+	
+	
+
+    @PostMapping("/sendAssignedCreditsEmail")
+    public ResponseEntity<String> sendAssignedCreditsEmail(@RequestBody EmailCreditResponse request) {
+        emailService.sendAssignedCreditsEmail(request);
+        return ResponseEntity.ok("Email sent successfully");
+    }
+    
+    
+    @PostMapping("/send-report")
+    public ResponseEntity<String> sendReportEmail(@RequestBody ReportRequestDto reportRequestDto) {
+        emailService.sendReportToSignersAndSender(reportRequestDto);
+        return ResponseEntity.ok("Emails sent successfully");
+    }
 
 }

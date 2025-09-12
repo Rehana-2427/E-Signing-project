@@ -1,7 +1,8 @@
 package com.example.e_signing_project.authservice.serviceimpl;
 
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -13,10 +14,16 @@ import org.springframework.stereotype.Service;
 
 import com.example.e_signing_project.authservice.config.JwtUtil;
 import com.example.e_signing_project.authservice.dto.RegisterRequest;
+import com.example.e_signing_project.authservice.dto.UserDTO;
 import com.example.e_signing_project.authservice.exception.EmailAlreadyExistsException;
+import com.example.e_signing_project.authservice.fiegnclient.AdminServiceClient;
 import com.example.e_signing_project.authservice.model.User;
 import com.example.e_signing_project.authservice.repository.UserRepository;
 import com.example.e_signing_project.authservice.service.AuthService;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 
 @Service
 public class AuthServiceImpl implements AuthService, UserDetailsService {
@@ -27,6 +34,12 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private JwtUtil jwtUtil;
+
+	@Autowired
+	private AdminServiceClient adminServiceClient;
 
 	@Override
 	public String registerUser(RegisterRequest request) {
@@ -43,8 +56,16 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 		user.setPassword(hashedPassword);
 		user.setEmailVerified(true);
 		userRepository.save(user);
-		return JwtUtil.generateToken(user.getUserEmail());
-
+		UserDTO dto = new UserDTO();
+		dto.setUserEmail(email);
+		dto.setUserName(request.getUserName());
+		try {
+			adminServiceClient.createUserCredits(dto);
+		} catch (Exception ex) {
+			// Log and handle error — maybe retry later or send to a dead-letter queue
+			System.out.println("Failed to sync with AdminService: " + ex.getMessage());
+		}
+		return jwtUtil.generateToken(user.getUserEmail());
 	}
 
 	@Override
@@ -62,8 +83,48 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 	}
 
 	@Override
-    public User getUserDetailsByEmail(String email) {
-        return userRepository.findByUserEmail(email);
-    }
+	public User getUserDetailsByEmail(String email) {
+		return userRepository.findByUserEmail(email);
+	}
+
+	@Override
+	public List<UserDTO> getAllUsers() {
+		// TODO Auto-generated method stub
+		return userRepository.findAllUsersWithNamesAndEmails();
+	}
+
+	@Override
+	public String googleLogin(String idTokenString) {
+		try {
+			GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
+					new JacksonFactory()).setAudience(Collections.singletonList("13721221316-vepimpc72pa1r5f443thq7vqo7rl5b0o.apps.googleusercontent.com")).build();
+
+			GoogleIdToken idToken = verifier.verify(idTokenString);
+
+			if (idToken != null) {
+				GoogleIdToken.Payload payload = idToken.getPayload();
+
+				String email = payload.getEmail();
+				String name = (String) payload.get("name");
+				boolean emailVerified = Boolean.TRUE.equals(payload.getEmailVerified());
+
+				// ✅ Check if user exists
+				User user = userRepository.findByUserEmail(email);
+
+				if (user == null) {
+					// 🛑 DO NOT create user yet
+					// Instead, generate token with payload info
+					return jwtUtil.generateToken(email); // JWT still based on email
+				}
+
+				// ✅ If user exists, return normal JWT
+				return jwtUtil.generateToken(user.getUserEmail());
+			} else {
+				throw new RuntimeException("Invalid ID token");
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Google authentication failed", e);
+		}
+	}
 
 }

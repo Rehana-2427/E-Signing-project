@@ -2,6 +2,7 @@ package com.example.document.service.Document_service.serviceImpl;
 
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.document.service.Document_service.dto.EmailRequest;
 import com.example.document.service.Document_service.dto.MyDocumentDTO;
+import com.example.document.service.Document_service.dto.SignerInfo;
 import com.example.document.service.Document_service.dto.SignerRequest;
 import com.example.document.service.Document_service.dto.SignerStatusResponse;
 import com.example.document.service.Document_service.dto.SignersContact;
@@ -75,10 +77,10 @@ public class SignerServiceImpl implements SignerService {
 
 			notifyOtherRecipients(document, signer); // 🔁 Other signers only
 			notifySenderAboutSigner(document, signer); // ✅ Update email to sender
-			sendCompletionSummary(document);
+//			sendCompletionReport(document);
 
 			if (allSignersCompleted(document)) {
-				sendCompletionSummary(document);
+				sendCompletionReport(document);
 			}
 		} else if ("multi_doc".equalsIgnoreCase(mode)) {
 			sendMultiDocEmail(document, signer);
@@ -132,40 +134,65 @@ public class SignerServiceImpl implements SignerService {
 		emailClient.sendUpdateStatusEmail(emailRequest); // Use the existing email method
 	}
 
-	private void sendCompletionSummary(Document doc) {
-		List<Signer> signers = doc.getSigners();
+	@Transactional
+	public void sendCompletionReport(Document document) {
 
-		long completedCount = signers.stream().filter(s -> "completed".equalsIgnoreCase(s.getSignStatus())).count();
+		List<Signer> signers = document.getSigners();
 
-		long totalCount = signers.size();
+		// Build List<SignerInfo> for email template
+		List<SignerInfo> signerInfos = signers.stream().map(s -> {
+			SignerInfo info = new SignerInfo();
+			info.setName(s.getName());
+			info.setEmail(s.getEmail());
+			info.setSignedAt(s.getSignedAt());
+			return info;
+		}).collect(Collectors.toList());
 
-		String summaryStatus;
-		if (completedCount == totalCount) {
-			summaryStatus = "All signers have completed signing.";
-		} else {
-			summaryStatus = completedCount + " signer" + (completedCount > 1 ? "s" : "") + " out of " + totalCount
-					+ " have completed signing.";
+		// Prepare recipients emails: all signers + sender
+		Set<String> recipientEmails = new HashSet();
+		for (Signer s : signers) {
+			recipientEmails.add(s.getEmail());
 		}
+		recipientEmails.add(document.getSenderEmail());
 
-		for (Signer signer : signers) {
-			EmailRequest payload = new EmailRequest();
-			payload.setTo(signer.getEmail());
-			payload.setSenderName(doc.getSenderName());
-			payload.setSenderEmail(doc.getSenderEmail());
-			payload.setTitle(doc.getDocumentName());
-			payload.setSignedAt(null);
-			payload.setSummaryStatus(summaryStatus); // ✅ Important
+		// Send email to each recipient separately
+		for (String toEmail : recipientEmails) {
+			EmailRequest emailRequest = new EmailRequest();
+			emailRequest.setTo(toEmail);
+			emailRequest.setTitle(document.getDocumentName());
+			emailRequest.setSenderEmail(document.getSenderEmail());
+			emailRequest.setSigners(signerInfos);
 
-			emailClient.sendSummaryEmail(payload);
+			// call email microservice via Feign client
+			emailClient.sendSummaryEmail(emailRequest);
 		}
 	}
 
 	@Override
 	public List<MyDocumentDTO> getDocumentsByEmail(String email) {
-		List<Signer> signers = signerRepository.findByEmail(email);
+//		List<Signer> signers = signerRepository.findByEmail(email);
+//		LocalDate now = LocalDate.now();
+//		return signers.stream().filter(signer -> {
+//			signer.getSigned_file();
+//			Document doc = signer.getDocument();
+//			return doc.getDeadline() == null || doc.getDeadline().isAfter(now);
+//		}).map(signer -> {
+//			Document doc = signer.getDocument();
+//			return new MyDocumentDTO(doc.getId(), doc.getDocumentName(), doc.getCreatedDate(), signer.getSignedAt(),
+//					signer.getSignStatus(), signer.getSigned_file());
+//		}).collect(Collectors.toList());
+		return convertToDto(signerRepository.findByEmail(email));
+	}
+
+	@Override
+	public List<MyDocumentDTO> getCompletedDocumentsByEmail(String email) {
+		return convertToDto(signerRepository.findCompletedByEmail(email));
+	}
+
+	private List<MyDocumentDTO> convertToDto(List<Signer> signers) {
 		LocalDate now = LocalDate.now();
+
 		return signers.stream().filter(signer -> {
-			signer.getSigned_file();
 			Document doc = signer.getDocument();
 			return doc.getDeadline() == null || doc.getDeadline().isAfter(now);
 		}).map(signer -> {
@@ -185,5 +212,4 @@ public class SignerServiceImpl implements SignerService {
 		// TODO Auto-generated method stub
 		return signerRepository.findSignersByDocumentId(documentId);
 	}
-
 }

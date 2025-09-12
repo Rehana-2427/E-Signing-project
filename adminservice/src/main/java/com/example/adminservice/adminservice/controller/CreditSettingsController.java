@@ -29,12 +29,12 @@ public class CreditSettingsController {
 	public List<CreditSettings> getCreditHistory() {
 		return creditSettingsService.getAllSettings();
 	}
+
+	@GetMapping("/currentCredits")
+	public CreditSettings getSettings() {
+		return creditSettingsService.getCurrentSettings();
+	}
+
 	
-
-    @GetMapping("/currentCredits")
-    public CreditSettings getSettings() {
-        return creditSettingsService.getCurrentSettings();
-    }
-
 
 }

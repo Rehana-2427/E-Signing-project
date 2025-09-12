@@ -5,6 +5,15 @@ public class UserDTO {
 
 	private String userEmail;
 
+	public UserDTO(String userName, String userEmail) {
+		super();
+		this.userName = userName;
+		this.userEmail = userEmail;
+	}
+
+	public UserDTO() {
+	}
+
 	public String getUserName() {
 		return userName;
 	}

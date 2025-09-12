@@ -25,9 +25,6 @@ public class Signer {
 	
 	@Lob
 	private byte[] signed_file;
-
-//	private String token;
-
 	public Long getId() {
 		return id;
 	}

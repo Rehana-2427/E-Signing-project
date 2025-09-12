@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Document Signing Report</title>
+</head>
+<body>
+    <h2>Signing Report for Document: <span th:text="${documentName}"></span></h2>
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Signer Name</th>
+                <th>Email</th>
+                <th>Signed At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="signer : ${signerList}">
+                <td th:text="${signer.name}"></td>
+                <td th:text="${signer.email}"></td>
+                <td th:text="${signer.signedAt}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
