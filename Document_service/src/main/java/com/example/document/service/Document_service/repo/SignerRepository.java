@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.example.document.service.Document_service.dto.SignerStatusResponse;
 import com.example.document.service.Document_service.dto.SignersContact;
+import com.example.document.service.Document_service.entity.Document;
 import com.example.document.service.Document_service.entity.Signer;
 
 public interface SignerRepository extends JpaRepository<Signer, Long> {
@@ -51,4 +52,21 @@ public interface SignerRepository extends JpaRepository<Signer, Long> {
 	long countUnsignedSigners(@Param("documentId") Long documentId);
 
 	List<Signer> findByDocumentId(Long documentId);
+
+	@Query("SELECT s FROM Signer s WHERE LOWER(s.email) = LOWER(:email) AND "
+			+ "(s.signStatus IS NULL OR LOWER(s.signStatus) <> 'completed') AND "
+			+ "(:query IS NULL OR LOWER(s.document.documentName) LIKE LOWER(CONCAT('%', :query, '%')))")
+	List<Signer> findPendingDocumentsByEmailAndQuery(@Param("email") String email, @Param("query") String query);
+
+	@Query("SELECT s FROM Signer s WHERE LOWER(s.email) = LOWER(:email) AND " + "LOWER(s.signStatus) = 'completed' AND "
+			+ "(:query IS NULL OR LOWER(s.document.documentName) LIKE LOWER(CONCAT('%', :query, '%')))")
+	List<Signer> findCompletedDocumentsByEmailAndQuery(@Param("email") String email, @Param("query") String query);
+
+	@Query("SELECT s FROM Signer s WHERE LOWER(s.email) = LOWER(:email) AND "
+			+ "(s.signStatus IS NULL OR LOWER(s.signStatus) <> 'completed')")
+	List<Signer> findPendingDocumentsByEmailOnly(@Param("email") String email);
+
+	@Query("SELECT s FROM Signer s WHERE LOWER(s.email) = LOWER(:email) AND LOWER(s.signStatus) = 'completed'")
+	List<Signer> findCompletedDocumentsByEmailOnly(@Param("email") String email);
+
 }

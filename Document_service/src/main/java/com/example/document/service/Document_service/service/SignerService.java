@@ -23,5 +23,9 @@ public interface SignerService {
 
 	List<MyDocumentDTO> getCompletedDocumentsByEmail(String email);
 
+	List<MyDocumentDTO> getSearchPendingDocs(String email, String query);
+
+	List<MyDocumentDTO> getSearchCompletedDocs(String email, String query);
+
 
 }

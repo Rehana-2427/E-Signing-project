@@ -24,6 +24,7 @@ import com.example.document.service.Document_service.feignClient.EmailClient;
 import com.example.document.service.Document_service.repo.DocumentRepository;
 import com.example.document.service.Document_service.repo.SignerRepository;
 import com.example.document.service.Document_service.service.SignerService;
+import com.example.document.service.Document_service.utility.PdfUtils;
 
 @Service
 public class SignerServiceImpl implements SignerService {
@@ -170,23 +171,82 @@ public class SignerServiceImpl implements SignerService {
 
 	@Override
 	public List<MyDocumentDTO> getDocumentsByEmail(String email) {
-//		List<Signer> signers = signerRepository.findByEmail(email);
-//		LocalDate now = LocalDate.now();
-//		return signers.stream().filter(signer -> {
-//			signer.getSigned_file();
-//			Document doc = signer.getDocument();
-//			return doc.getDeadline() == null || doc.getDeadline().isAfter(now);
-//		}).map(signer -> {
-//			Document doc = signer.getDocument();
-//			return new MyDocumentDTO(doc.getId(), doc.getDocumentName(), doc.getCreatedDate(), signer.getSignedAt(),
-//					signer.getSignStatus(), signer.getSigned_file());
-//		}).collect(Collectors.toList());
 		return convertToDto(signerRepository.findByEmail(email));
 	}
 
 	@Override
 	public List<MyDocumentDTO> getCompletedDocumentsByEmail(String email) {
 		return convertToDto(signerRepository.findCompletedByEmail(email));
+	}
+
+//	@Override
+//	public List<MyDocumentDTO> getSearchPendingDocs(String email, String query) {
+//	    List<Signer> signers = signerRepository.findPendingDocumentsByEmailAndQuery(email, query);
+//	    return convertToDto(signers);
+//	}
+
+	@Override
+	public List<MyDocumentDTO> getSearchPendingDocs(String email, String query) {
+		List<Signer> signers = signerRepository.findPendingDocumentsByEmailOnly(email); // exclude query here
+
+		if (query != null && !query.trim().isEmpty() && !"no due date".equalsIgnoreCase(query.trim())) {
+			String finalQuery = query.toLowerCase();
+
+			signers = signers.stream().filter(signer -> {
+				Document doc = signer.getDocument();
+				boolean nameMatch = doc.getDocumentName() != null
+						&& doc.getDocumentName().toLowerCase().contains(finalQuery);
+
+				boolean contentMatch = false;
+				if (doc.getEditedFile() != null && doc.getEditedFile().length > 0) {
+					try {
+						String extractedText = PdfUtils.extractTextFromPdf(doc.getEditedFile());
+						contentMatch = extractedText.toLowerCase().contains(finalQuery);
+					} catch (Exception e) {
+						System.err.println("Failed to extract PDF content: " + e.getMessage());
+					}
+				}
+
+				return nameMatch || contentMatch;
+			}).collect(Collectors.toList());
+		}
+
+		return convertToDto(signers);
+	}
+
+//	@Override
+//	public List<MyDocumentDTO> getSearchCompletedDocs(String email, String query) {
+//		List<Signer> signers = signerRepository.findCompletedDocumentsByEmailAndQuery(email, query);
+//		return convertToDto(signers);
+//	}
+	
+	@Override
+	public List<MyDocumentDTO> getSearchCompletedDocs(String email, String query) {
+		List<Signer> signers = signerRepository.findCompletedDocumentsByEmailOnly(email);
+
+		if (query != null && !query.trim().isEmpty() && !"no due date".equalsIgnoreCase(query.trim())) {
+			String finalQuery = query.toLowerCase();
+
+			signers = signers.stream().filter(signer -> {
+				Document doc = signer.getDocument();
+				boolean nameMatch = doc.getDocumentName() != null
+						&& doc.getDocumentName().toLowerCase().contains(finalQuery);
+
+				boolean contentMatch = false;
+				if (doc.getEditedFile() != null && doc.getEditedFile().length > 0) {
+					try {
+						String extractedText = PdfUtils.extractTextFromPdf(doc.getEditedFile());
+						contentMatch = extractedText.toLowerCase().contains(finalQuery);
+					} catch (Exception e) {
+						System.err.println("Failed to extract PDF content: " + e.getMessage());
+					}
+				}
+
+				return nameMatch || contentMatch;
+			}).collect(Collectors.toList());
+		}
+
+		return convertToDto(signers);
 	}
 
 	private List<MyDocumentDTO> convertToDto(List<Signer> signers) {
@@ -212,4 +272,5 @@ public class SignerServiceImpl implements SignerService {
 		// TODO Auto-generated method stub
 		return signerRepository.findSignersByDocumentId(documentId);
 	}
+
 }

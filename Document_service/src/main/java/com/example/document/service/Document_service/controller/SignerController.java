@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.document.service.Document_service.dto.MyConsentResponse;
 import com.example.document.service.Document_service.dto.MyDocumentDTO;
 import com.example.document.service.Document_service.dto.SignerRequest;
 import com.example.document.service.Document_service.dto.SignerStatusResponse;
@@ -66,6 +67,23 @@ public class SignerController {
 	public ResponseEntity<List<SignerStatusResponse>> getSignersByDocument(@PathVariable Long documentId) {
 		List<SignerStatusResponse> signers = signerService.getSignerStatusForDocument(documentId);
 		return ResponseEntity.ok(signers);
+	}
+	
+	
+	@GetMapping("/searchPendingDocs")
+	public ResponseEntity<List<MyDocumentDTO>> getMypendingDocs(@RequestParam String email,
+			@RequestParam(required = false) String query) {
+
+		List<MyDocumentDTO> pendingDocs = signerService.getSearchPendingDocs(email, query);
+		return ResponseEntity.ok(pendingDocs);
+	}
+
+	@GetMapping("/searchcompletedDocs")
+	public ResponseEntity<List<MyDocumentDTO>> getcompletedDocs(@RequestParam String email,
+			@RequestParam(required = false) String query) {
+
+		List<MyDocumentDTO> completedDocs = signerService.getSearchCompletedDocs(email, query);
+		return ResponseEntity.ok(completedDocs);
 	}
 
 }

@@ -22,6 +22,10 @@ public class MyDocumentDTO {
 		this.signedFile = signedFile;
 	}
 
+	public MyDocumentDTO() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Long getDocumentId() {
 		return documentId;
 	}

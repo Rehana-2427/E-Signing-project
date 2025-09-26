@@ -62,4 +62,8 @@ public interface DocumentService {
 
 
 	AuditTrailResponseDto getAuditTrailByDocumentId(Long documentId);
+
+	List<MyConsentResponse> getSearchSentConsensts(String senderEmail, String query);
+
+	List<MyConsentResponse> getSearchDraftConsensts(String senderEmail, String query);
 }

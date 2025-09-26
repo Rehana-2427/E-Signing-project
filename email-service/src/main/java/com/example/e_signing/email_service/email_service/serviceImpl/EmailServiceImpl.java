@@ -93,7 +93,7 @@ public class EmailServiceImpl implements EmailService {
 		if ("dev".equalsIgnoreCase(activeProfile)) {
 			baseUrl = "http://localhost:3003";
 		} else {
-			baseUrl = "http://51.79.18.21:3003";
+			baseUrl = "https://app.signbook.co";
 		}
 		String loginUrl = baseUrl + "/signatory_verification?token=" + recipient.getToken();
 		Context context = new Context();
@@ -229,7 +229,13 @@ public class EmailServiceImpl implements EmailService {
 		helper.setReplyTo(request.getSenderEmail());
 		helper.setTo(recipient.getEmail());
 		helper.setSubject("Reminder to Sign Document: " + request.getTitle());
-
+		String baseUrl;
+		String activeProfile = System.getProperty("spring.profiles.active", "live");
+		if ("dev".equalsIgnoreCase(activeProfile)) {
+			baseUrl = "http://localhost:3003";
+		} else {
+			baseUrl = "https://app.signbook.co";
+		}
 		System.out.println("from" + request.getSenderEmail());
 		System.out.println("to" + recipient.getEmail());
 		Context context = new Context();
@@ -238,6 +244,7 @@ public class EmailServiceImpl implements EmailService {
 		context.setVariable("senderName", request.getSenderName());
 		context.setVariable("signBy", request.getSignRequiredBy());
 		context.setVariable("token", recipient.getToken());
+		context.setVariable("loginUrl", baseUrl);
 		String htmlContent = templateEngine.process("reminder-email.html", context);
 		helper.setText(htmlContent, true); // HTML enabled
 		mailSender.send(message);

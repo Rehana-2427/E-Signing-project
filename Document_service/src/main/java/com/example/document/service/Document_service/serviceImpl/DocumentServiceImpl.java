@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 //
 //import java.io.IOException;
 //import java.time.LocalDate;
@@ -61,6 +63,7 @@ import com.example.document.service.Document_service.repo.DocumentRepository;
 //import com.example.document.service.Document_service.repo.Sign_DocumentRepository;
 import com.example.document.service.Document_service.repo.SignerRepository;
 import com.example.document.service.Document_service.service.DocumentService;
+import com.example.document.service.Document_service.utility.PdfUtils;
 
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //
@@ -82,6 +85,12 @@ public class DocumentServiceImpl implements DocumentService {
 	@Override
 	public Long saveDocument(DocumentRequest data, MultipartFile file) throws IOException {
 		Document doc = new Document();
+		if (data.getDocumentId() != null) {
+			doc = documentRepository.findById(data.getDocumentId())
+					.orElseThrow(() -> new RuntimeException("Document not found with ID: " + data.getDocumentId()));
+		} else {
+			doc = new Document(); // new document
+		}
 		doc.setSenderEmail(data.getSenderEmail());
 		doc.setSenderName(data.getSenderName());
 		doc.setDocumentName(data.getDocumentName());
@@ -104,23 +113,26 @@ public class DocumentServiceImpl implements DocumentService {
 		doc.setEditedFile(file.getBytes());
 		doc.setDraft(data.getDraft() != null ? data.getDraft() : false);
 
+		// Save the document first
 		Document savedDoc = documentRepository.save(doc);
 
+		// Save signers
 		List<RecipientToken> recipientTokens = new ArrayList<>();
 		for (SignerRequest s : data.getSigners()) {
-
 			Signer signer = new Signer();
 			signer.setName(s.getName());
 			signer.setEmail(s.getEmail());
 			signer.setDocument(savedDoc);
 			signerRepository.save(signer);
+
 			String jwtToken = JwtUtil.generateToken(data.getSenderName(), data.getDocumentName(), s.getEmail(),
 					doc.getId(), java.sql.Date.valueOf(data.getDeadline()));
 
 			recipientTokens.add(new RecipientToken(s.getName(), s.getEmail(), doc.getId(), jwtToken));
 		}
 
-		if (data.getDraft() != null && data.getDraft()) {
+		// If it's a draft, return immediately
+		if (Boolean.TRUE.equals(data.getDraft())) {
 			return savedDoc.getId();
 		}
 
@@ -130,14 +142,21 @@ public class DocumentServiceImpl implements DocumentService {
 
 		EmailRequest emailRequest = new EmailRequest();
 		emailRequest.setSenderEmail(data.getSenderEmail());
-//		emailRequest.setRecipientEmails(recipientEmails);
 		emailRequest.setRecipients(recipientTokens);
 		emailRequest.setTitle("Please sign the document: " + data.getDocumentName());
 		emailRequest.setSignRequiredBy(data.getDeadline());
 		emailRequest.setSenderName(data.getSenderName());
+
 		emailClient.sendDocumentSigningRequestEmail(emailRequest);
 
 		return savedDoc.getId();
+	}
+
+	private String extractTextFromPdf(MultipartFile file) throws IOException {
+		try (PDDocument document = PDDocument.load(file.getInputStream())) {
+			PDFTextStripper stripper = new PDFTextStripper();
+			return stripper.getText(document);
+		}
 	}
 
 	@Override
@@ -158,7 +177,7 @@ public class DocumentServiceImpl implements DocumentService {
 			}
 
 			responseList.add(new MyConsentResponse(doc.getId(), doc.getDocumentName(), doc.getCreatedDate(),
-					doc.getDraft(), signedOn, totalSigners, signedCount));
+					doc.getDraft(), signedOn, totalSigners, signedCount, doc.getEditedFile()));
 		}
 
 		return responseList;
@@ -237,7 +256,7 @@ public class DocumentServiceImpl implements DocumentService {
 			}
 
 			responseList.add(new MyConsentResponse(doc.getId(), doc.getDocumentName(), doc.getCreatedDate(),
-					doc.getDraft(), signedOn, totalSigners, signedCount));
+					doc.getDraft(), signedOn, totalSigners, signedCount, doc.getEditedFile()));
 		}
 
 		return responseList;
@@ -323,6 +342,93 @@ public class DocumentServiceImpl implements DocumentService {
 		response.setSigners(signerDtos);
 		response.setAllCompleted(allCompleted);
 		return response;
+	}
+
+	@Override
+	public List<MyConsentResponse> getSearchSentConsensts(String senderEmail, String query) {
+		List<Document> documents = documentRepository.findBySenderEmailAndDraftFalseOrderByCreatedDateDesc(senderEmail);
+
+//		if (query != null && !query.trim().isEmpty() && !"no due date".equalsIgnoreCase(query.trim())) {
+//			documents = documents.stream()
+//					.filter(doc -> doc.getDocumentName().toLowerCase().contains(query.toLowerCase()))
+//					.collect(Collectors.toList());
+//		}
+
+		if (query != null && !query.trim().isEmpty() && !"no due date".equalsIgnoreCase(query.trim())) {
+			String finalQuery = query.toLowerCase();
+
+			documents = documents.stream().filter(doc -> {
+				boolean nameMatch = doc.getDocumentName() != null
+						&& doc.getDocumentName().toLowerCase().contains(finalQuery);
+
+				boolean contentMatch = false;
+				if (doc.getEditedFile() != null && doc.getEditedFile().length > 0) {
+					String extractedText = PdfUtils.extractTextFromPdf(doc.getEditedFile());
+					contentMatch = extractedText.toLowerCase().contains(finalQuery);
+				}
+
+				return nameMatch || contentMatch;
+			}).collect(Collectors.toList());
+		}
+
+		return convertToResponseList(documents);
+	}
+
+//	@Override
+//	public List<MyConsentResponse> getSearchDraftConsensts(String senderEmail, String query) {
+//		List<Document> documents = documentRepository.findBySenderEmailAndDraftTrueOrderByCreatedDateDesc(senderEmail);
+//
+//		if (query != null && !query.trim().isEmpty() && !"no due date".equalsIgnoreCase(query.trim())) {
+//			documents = documents.stream()
+//					.filter(doc -> doc.getDocumentName().toLowerCase().contains(query.toLowerCase()))
+//					.collect(Collectors.toList());
+//		}
+//
+//		return convertToResponseList(documents);
+//	}
+
+	@Override
+	public List<MyConsentResponse> getSearchDraftConsensts(String senderEmail, String query) {
+		List<Document> documents = documentRepository.findBySenderEmailAndDraftTrueOrderByCreatedDateDesc(senderEmail);
+
+		if (query != null && !query.trim().isEmpty() && !"no due date".equalsIgnoreCase(query.trim())) {
+			String finalQuery = query.toLowerCase();
+
+			documents = documents.stream().filter(doc -> {
+				boolean nameMatch = doc.getDocumentName() != null
+						&& doc.getDocumentName().toLowerCase().contains(finalQuery);
+
+				boolean contentMatch = false;
+				if (doc.getEditedFile() != null && doc.getEditedFile().length > 0) {
+					String extractedText = PdfUtils.extractTextFromPdf(doc.getEditedFile());
+					contentMatch = extractedText.toLowerCase().contains(finalQuery);
+				}
+
+				return nameMatch || contentMatch;
+			}).collect(Collectors.toList());
+		}
+
+		return convertToResponseList(documents);
+	}
+
+	private List<MyConsentResponse> convertToResponseList(List<Document> documents) {
+		List<MyConsentResponse> responseList = new ArrayList<>();
+		for (Document doc : documents) {
+			int totalSigners = doc.getSigners().size();
+			int signedCount = (int) doc.getSigners().stream()
+					.filter(s -> "completed".equalsIgnoreCase(s.getSignStatus())).count();
+
+			LocalDate signedOn = null;
+			if (totalSigners > 0 && signedCount == totalSigners) {
+				signedOn = doc.getSigners().stream().map(Signer::getSignedAt).filter(Objects::nonNull)
+						.max(LocalDate::compareTo).orElse(null);
+			}
+
+			responseList.add(new MyConsentResponse(doc.getId(), doc.getDocumentName(), doc.getCreatedDate(),
+					doc.getDraft(), signedOn, totalSigners, signedCount, doc.getEditedFile()));
+		}
+
+		return responseList;
 	}
 
 }

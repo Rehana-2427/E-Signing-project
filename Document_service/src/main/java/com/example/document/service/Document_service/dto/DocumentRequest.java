@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class DocumentRequest {
+	private Long documentId;
 	private String senderEmail;
 	private String senderName;
 	private String documentName;
@@ -24,6 +25,14 @@ public class DocumentRequest {
 	private Integer totalCredits;
 
 	private List<SignerRequest> signers;
+
+	public Long getDocumentId() {
+		return documentId;
+	}
+
+	public void setDocumentId(Long documentId) {
+		this.documentId = documentId;
+	}
 
 	public String getSenderEmail() {
 		return senderEmail;

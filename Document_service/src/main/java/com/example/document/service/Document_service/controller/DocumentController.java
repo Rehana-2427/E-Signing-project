@@ -94,4 +94,20 @@ public class DocumentController {
 		AuditTrailResponseDto dto = documentService.getAuditTrailByDocumentId(documentId);
 		return ResponseEntity.ok(dto);
 	}
+
+	@GetMapping("/searchSentConsensts")
+	public ResponseEntity<List<MyConsentResponse>> getMyConsents(@RequestParam String senderEmail,
+			@RequestParam(required = false) String query) {
+
+		List<MyConsentResponse> myConsents = documentService.getSearchSentConsensts(senderEmail, query);
+		return ResponseEntity.ok(myConsents);
+	}
+
+	@GetMapping("/searchDraftConsensts")
+	public ResponseEntity<List<MyConsentResponse>> getDraftConsents(@RequestParam String senderEmail,
+			@RequestParam(required = false) String query) {
+
+		List<MyConsentResponse> draftConsents = documentService.getSearchDraftConsensts(senderEmail, query);
+		return ResponseEntity.ok(draftConsents);
+	}
 }
