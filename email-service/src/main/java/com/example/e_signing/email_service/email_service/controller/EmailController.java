@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.e_signing.email_service.email_service.request.EmailCreditResponse;
 import com.example.e_signing.email_service.email_service.request.EmailRequest;
 import com.example.e_signing.email_service.email_service.request.ReportRequestDto;
+import com.example.e_signing.email_service.email_service.request.SendInviteUserByEmail;
 import com.example.e_signing.email_service.email_service.service.EmailService;
 
 import jakarta.mail.MessagingException;
@@ -105,4 +106,18 @@ public class EmailController {
         return ResponseEntity.ok("Emails sent successfully");
     }
 
+    
+    @PostMapping("/sendInviationEmail")
+    public ResponseEntity<String> sendInviationEmailToUser(@RequestBody SendInviteUserByEmail sendInviteUserByEmail) {
+    	System.out.println("invitation of user");
+        emailService.sendInviationEmailToUser(sendInviteUserByEmail);
+        return ResponseEntity.ok("Emails sent successfully");
+    }
+    
+    public String postMethodName(@RequestBody String entity) {
+        //TODO: process POST request
+        
+        return entity;
+    }
+    
 }

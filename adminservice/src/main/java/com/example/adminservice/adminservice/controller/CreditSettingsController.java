@@ -35,6 +35,5 @@ public class CreditSettingsController {
 		return creditSettingsService.getCurrentSettings();
 	}
 
-	
 
 }

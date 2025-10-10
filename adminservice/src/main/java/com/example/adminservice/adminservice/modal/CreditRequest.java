@@ -20,6 +20,8 @@ public class CreditRequest {
 	private LocalDate requestedAt;
 	private boolean seenByAdmin = false;
 
+	private String companyName;
+
 	@PrePersist
 	public void prePersist() {
 		this.requestedAt = LocalDate.now();
@@ -71,6 +73,14 @@ public class CreditRequest {
 
 	public void setSeenByAdmin(boolean seenByAdmin) {
 		this.seenByAdmin = seenByAdmin;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 
 }

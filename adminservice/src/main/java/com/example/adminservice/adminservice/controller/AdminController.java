@@ -32,8 +32,6 @@ import com.example.adminservice.adminservice.service.UserSyncService;
 @RequestMapping("/api/userCreditsList")
 public class AdminController {
 
-//	@Autowired
-//	private SimpMessagingTemplate messagingTemplate;
 
 	@Autowired
 	private UserSyncService userSyncService;

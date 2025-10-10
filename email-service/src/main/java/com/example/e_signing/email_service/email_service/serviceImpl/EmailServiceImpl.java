@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,6 +18,7 @@ import com.example.e_signing.email_service.email_service.request.EmailCreditResp
 import com.example.e_signing.email_service.email_service.request.EmailRequest;
 import com.example.e_signing.email_service.email_service.request.RecipientToken;
 import com.example.e_signing.email_service.email_service.request.ReportRequestDto;
+import com.example.e_signing.email_service.email_service.request.SendInviteUserByEmail;
 import com.example.e_signing.email_service.email_service.service.EmailService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -38,6 +40,9 @@ public class EmailServiceImpl implements EmailService {
 
 	@Autowired
 	private TemplateEngine templateEngine;
+
+	@Autowired
+	private Environment environment;
 
 	@Override
 	public void sendEmail(EmailRequest emailRequest) {
@@ -309,37 +314,45 @@ public class EmailServiceImpl implements EmailService {
 			throw new RuntimeException("Failed to send email to " + to, e);
 		}
 	}
-//	@Override
-//	public void sendGroupDocumentEmails(EmailRequest request) throws Exception {
-//		MimeMessage message = mailSender.createMimeMessage();
-//		MimeMessageHelper helper = new MimeMessageHelper(message, true);
-//
-//		helper.setFrom("ping@jobbox.one");
-//		helper.setReplyTo(request.getSenderEmail());
-//
-//		// Send to all recipient emails
-//		helper.setTo(request.getRecipientEmails().toArray(new String[0]));
-//		helper.setSubject("Action Required: Sign Document - " + request.getTitle());
-//
-//		// Prepare HTML content using Thymeleaf
-//		Context context = new Context();
-//		context.setVariable("title", request.getTitle());
-//		context.setVariable("signRequiredBy", request.getSignRequiredBy());
-//		context.setVariable("senderEmail", request.getSenderEmail());
-//
-//		// Optional: Pass list of all signers if you want to show them in email body
-//		context.setVariable("recipientList", request.getRecipientEmails());
-//
-//		String htmlContent = templateEngine.process("group_document_sign_request.html", context);
-//		helper.setText(htmlContent, true);
-//
-//		// Attach PDF
-//		if (request.getPdfBytes() != null) {
-//			helper.addAttachment("document.pdf", new ByteArrayResource(request.getPdfBytes()));
-//		}
-//
-//		mailSender.send(message);
-//
-//	}
+
+	@Override
+	public void sendInviationEmailToUser(SendInviteUserByEmail sendInviteUserByEmail) {
+		try {
+			MimeMessage mimeMessage = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+			helper.setFrom(username);
+			helper.setReplyTo(sendInviteUserByEmail.getSenderEmail());
+			helper.setTo(sendInviteUserByEmail.getTo());
+			helper.setSubject("You're invited to join " + sendInviteUserByEmail.getCompanyName());
+
+			String[] activeProfiles = environment.getActiveProfiles();
+			String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "live";
+
+			String baseUrl = "dev".equalsIgnoreCase(activeProfile) ? "http://localhost:3003"
+					: "https://app.signbook.co";
+
+			String approvalUrl = baseUrl + "/approve-invitation?token=" + sendInviteUserByEmail.getToken();
+
+			Context context = new Context();
+			context.setVariable("to", sendInviteUserByEmail.getTo());
+			context.setVariable("companyName", sendInviteUserByEmail.getCompanyName());
+			context.setVariable("senderEmail", sendInviteUserByEmail.getSenderEmail());
+			context.setVariable("role", sendInviteUserByEmail.getRole());
+			context.setVariable("token", sendInviteUserByEmail.getToken());
+			context.setVariable("approvalUrl", approvalUrl);
+
+			// 4. Process the HTML template
+			String htmlContent = templateEngine.process("invite-email.html", context);
+			helper.setText(htmlContent, true);
+
+			// 5. Send the email
+			mailSender.send(mimeMessage);
+
+		} catch (MessagingException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Email sending failed: " + e.getMessage());
+		}
+	}
 
 }

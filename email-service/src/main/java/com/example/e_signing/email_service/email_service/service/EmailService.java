@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.example.e_signing.email_service.email_service.request.EmailCreditResponse;
 import com.example.e_signing.email_service.email_service.request.EmailRequest;
 import com.example.e_signing.email_service.email_service.request.ReportRequestDto;
+import com.example.e_signing.email_service.email_service.request.SendInviteUserByEmail;
 
 import jakarta.mail.MessagingException;
 
@@ -36,4 +37,7 @@ public interface EmailService {
 
 
 	public void sendReportToSignersAndSender(ReportRequestDto reportRequestDto);
+
+
+	public void sendInviationEmailToUser(SendInviteUserByEmail sendInviteUserByEmail);
 }

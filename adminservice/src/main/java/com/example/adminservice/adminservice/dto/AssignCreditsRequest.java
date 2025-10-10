@@ -3,6 +3,7 @@ package com.example.adminservice.adminservice.dto;
 public class AssignCreditsRequest {
 	private String userEmail;
 	private int creditsToAssign;
+	private String companyName;
 
 	public String getUserEmail() {
 		return userEmail;
@@ -18,6 +19,14 @@ public class AssignCreditsRequest {
 
 	public void setCreditsToAssign(int creditsToAssign) {
 		this.creditsToAssign = creditsToAssign;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 
 }

@@ -19,10 +19,21 @@ public class CreditRequestServiceImpl implements CreditRequestService {
 	@Override
 	public void saveRequest(CreditRequestMessage message) {
 		CreditRequest request = new CreditRequest();
-		request.setUserName(message.getUserName());
-		request.setUserEmail(message.getUserEmail());
+		boolean isCompanyRequest = message.getCompanyName() != null && !message.getCompanyName().isEmpty();
+		if (isCompanyRequest) {
+			request.setCompanyName(message.getCompanyName());
+			request.setUserEmail(message.getUserEmail());
+			request.setUserName(message.getUserName());
+		} else {
+			if (message.getUserName() == null || message.getUserEmail() == null) {
+				throw new IllegalArgumentException("User name and email are required for user requests");
+			}
+			request.setUserName(message.getUserName());
+			request.setUserEmail(message.getUserEmail());
+		}
+	
 		request.setRequestedCredits(message.getRequestedCredits());
-		request.setSeenByAdmin(false); // Default to false
+		request.setSeenByAdmin(false);
 		CreditRequest saved = creditRequestRepository.save(request);
 
 	}
