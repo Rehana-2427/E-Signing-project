@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -18,6 +19,7 @@ import com.example.e_signing.email_service.email_service.request.EmailCreditResp
 import com.example.e_signing.email_service.email_service.request.EmailRequest;
 import com.example.e_signing.email_service.email_service.request.RecipientToken;
 import com.example.e_signing.email_service.email_service.request.ReportRequestDto;
+import com.example.e_signing.email_service.email_service.request.ReviewerToken;
 import com.example.e_signing.email_service.email_service.request.SendInviteUserByEmail;
 import com.example.e_signing.email_service.email_service.service.EmailService;
 
@@ -110,6 +112,9 @@ public class EmailServiceImpl implements EmailService {
 		context.setVariable("recipientName", recipient.getName());
 		context.setVariable("token", recipient.getToken());
 		context.setVariable("loginUrl", loginUrl);
+		if (request.getCompanyName() != null && !request.getCompanyName().isEmpty()) {
+			context.setVariable("companyName", request.getCompanyName());
+		}
 		String htmlContent = templateEngine.process("document_signing_request.html", context);
 		helper.setText(htmlContent, true);
 
@@ -355,4 +360,104 @@ public class EmailServiceImpl implements EmailService {
 		}
 	}
 
+	@Override
+	public void sendEmailToReviewers(EmailRequest request) throws MessagingException {
+		for (ReviewerToken reviewer : request.getReviewers()) {
+			sendReviewerEmail(request, reviewer);
+		}
+
+	}
+
+	private void sendReviewerEmail(EmailRequest request, ReviewerToken reviewer) throws MessagingException {
+		// TODO Auto-generated method stub
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+		helper.setFrom("ping@jobbox.one");
+		helper.setReplyTo(request.getSenderEmail());
+		helper.setTo(reviewer.getReviewerEmail());
+
+		helper.setSubject("Action Required: Review Document - " + request.getTitle());
+		String baseUrl;
+		String[] activeProfiles = environment.getActiveProfiles();
+		String activeProfile = activeProfiles.length > 0 ? activeProfiles[0] : "live";
+		if ("dev".equalsIgnoreCase(activeProfile)) {
+			baseUrl = "http://localhost:3003";
+		} else {
+			baseUrl = "https://app.signbook.co";
+		}
+		String loginUrl = baseUrl + "/reviewer_verification?token=" + reviewer.getToken();
+
+		Context context = new Context();
+		context.setVariable("reviewerEmail", reviewer.getReviewerEmail());
+		context.setVariable("title", request.getTitle());
+		context.setVariable("senderEmail", request.getSenderEmail());
+		context.setVariable("senderName", request.getSenderName());
+		context.setVariable("token", reviewer.getToken());
+		context.setVariable("loginUrl", loginUrl);
+		if (request.getCompanyName() != null && !request.getCompanyName().trim().isEmpty()) {
+			context.setVariable("senderIdentity", request.getCompanyName() + " - " + request.getSenderEmail());
+		} else {
+			context.setVariable("senderIdentity", request.getSenderEmail());
+		}
+		String htmlContent = templateEngine.process("reviewer-email-template", context);
+		helper.setText(htmlContent, true);
+
+		mailSender.send(message);
+	}
+
 }
+
+//	@Override
+//	public void sendEmailToReviewers(EmailRequest request) {
+//		String baseUrl;
+//		String activeProfile = System.getProperty("spring.profiles.active", "live");
+//		if ("dev".equalsIgnoreCase(activeProfile)) {
+//			baseUrl = "http://localhost:3003";
+//		} else {
+//			baseUrl = "https://app.signbook.co";
+//		}
+//
+//		String loginUrl = baseUrl + "/signin";
+//
+//		for (String reviewerEmail : request.getReviewerEmails()) {
+//			if (reviewerEmail == null || reviewerEmail.trim().isEmpty()) {
+//				System.err.println("⚠️ Skipping null or empty reviewer email.");
+//				continue;
+//			}
+//
+//			try {
+//				MimeMessage message = mailSender.createMimeMessage();
+//				MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+//
+//				helper.setFrom("ping@jobbox.one");
+//				helper.setTo(reviewerEmail);
+//				helper.setSubject("Action Required: Review Document - " + request.getTitle());
+//				helper.setReplyTo(request.getSenderEmail());
+//
+//				// Prepare the context for Thymeleaf
+//				Context context = new Context();
+//				context.setVariable("reviewerEmail", reviewerEmail);
+//				context.setVariable("senderName", request.getSenderName());
+//				context.setVariable("documentTitle", request.getTitle());
+//				context.setVariable("loginUrl", loginUrl);
+//
+//				// Prefer companyName if it's set, otherwise fallback to senderEmail
+//				if (request.getCompanyName() != null && !request.getCompanyName().trim().isEmpty()) {
+//					context.setVariable("senderIdentity",
+//							request.getCompanyName() + " - " + request.getSenderEmail());
+//				} else {
+//					context.setVariable("senderIdentity", request.getSenderEmail());
+//				}
+//
+//				String htmlContent = templateEngine.process("reviewer-email-template", context);
+//				helper.setText(htmlContent, true);
+//
+//				mailSender.send(message);
+//				System.out.println("✅ Email sent to reviewer: " + reviewerEmail);
+//			} catch (MessagingException e) {
+//				System.err.println("❌ Failed to send email to reviewer: " + reviewerEmail + " -> " + e.getMessage());
+//			}
+//		}
+//
+//	}

@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<title>Document Signature Request</title>
+	<title>Document Review Request</title>
 </head>
 
 <body style="font-family: Arial, sans-serif; background-color: #f6f6f6; padding: 20px; color: #333;">
@@ -11,16 +10,18 @@
 		style="max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px;">
 		<tr>
 			<td style="padding: 20px;">
-				<h2 style="color: #007BFF;">📄 Document Signature Request</h2>
+				<h2 style="color: #007BFF;">📄 Document Review Request</h2>
 
-				<p>Dear <strong th:text="${recipientName}"></strong>,</p>
-				<p>You have a new document titled <strong th:text="${title}">[Title]</strong> that requires your
-					signature.</p>
-				<p th:if="${companyName != null}">
-					This document was sent by <strong th:text="${companyName}">[Company]</strong>.
+				<p>Dear Reviewer, <strong th:text="${reviewerEmail}"></strong>,</p>
+
+				<p>You have been requested to review the document titled: <strong th:text="${title}"></strong>.
 				</p>
-				<p>Please review and sign it by <strong th:text="${signRequiredBy}">[Date]</strong>.</p>
-				<p>To proceed, please log in to the signbook.co platform using the link below:</p>
+
+				<p>This document was sent by <strong th:text="${senderIdentity}"></strong></p>
+
+				<p>Please log in to your account to review the document.</p>
+
+				<p>To proceed, click the button below to log in to the SignBook platform:</p>
 
 				<p style="margin: 20px 0;">
 					<a th:href="${loginUrl}" target="_blank"
@@ -29,7 +30,7 @@
 					</a>
 				</p>
 				<p>If you have questions, you can reply to <strong th:text="${senderEmail}">[Sender Email]</strong>.</p>
-				<p>Thank you,<br />The signbook.co Team</p>
+				<p>Thank you,The signbook.co Team</p>
 			</td>
 		</tr>
 	</table>

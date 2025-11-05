@@ -40,4 +40,7 @@ public interface EmailService {
 
 
 	public void sendInviationEmailToUser(SendInviteUserByEmail sendInviteUserByEmail);
+
+
+	public void sendEmailToReviewers(EmailRequest request) throws MessagingException;
 }

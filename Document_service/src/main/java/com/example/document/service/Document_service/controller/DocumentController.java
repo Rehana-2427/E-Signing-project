@@ -3,16 +3,19 @@ package com.example.document.service.Document_service.controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +27,8 @@ import com.example.document.service.Document_service.dto.AuditTrailResponseDto;
 import com.example.document.service.Document_service.dto.DocumentRequest;
 import com.example.document.service.Document_service.dto.EmailRequest;
 import com.example.document.service.Document_service.dto.MyConsentResponse;
+import com.example.document.service.Document_service.dto.ParticipantStatusDTO;
+import com.example.document.service.Document_service.dto.UnseenDocumentDTO;
 import com.example.document.service.Document_service.entity.Document;
 import com.example.document.service.Document_service.entity.Signer;
 import com.example.document.service.Document_service.service.DocumentService;
@@ -55,6 +60,19 @@ public class DocumentController {
 		return ResponseEntity.ok(draftConsents);
 	}
 
+	@PutMapping("/send-to-signers")
+	public ResponseEntity<String> sendToSigners(@RequestParam long documentId) {
+		try {
+			String message = documentService.sendToSigners(documentId);
+			return ResponseEntity.ok(message);
+		} catch (IllegalStateException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error sending document to signers: " + e.getMessage());
+		}
+	}
+
 	@GetMapping("/total-credits")
 	public ResponseEntity<Integer> getTotalCreditsBySenderEmail(@RequestParam String senderEmail) {
 		Integer totalCredits = documentService.getTotalCreditsBySenderEmail(senderEmail);
@@ -72,9 +90,15 @@ public class DocumentController {
 //
 //		return ResponseEntity.ok().headers(headers).body(document.getEditedFile());
 //	}
+
 	@GetMapping("/view-document/{documentId}/{email}")
 	public ResponseEntity<byte[]> viewDocumentForSigner(@PathVariable Long documentId, @PathVariable String email) {
 		return documentService.getDocumentForSigner(documentId, email);
+	}
+
+	@GetMapping("/view-document-reviewer/{documentId}/{email}")
+	public ResponseEntity<byte[]> viewDocumentForReviewer(@PathVariable Long documentId, @PathVariable String email) {
+		return documentService.getDocumentForReviewer(documentId, email);
 	}
 
 	@PostMapping("/send-reminder")
@@ -110,4 +134,26 @@ public class DocumentController {
 		List<MyConsentResponse> draftConsents = documentService.getSearchDraftConsensts(senderEmail, query);
 		return ResponseEntity.ok(draftConsents);
 	}
+
+	@GetMapping("/participants/{documentId}")
+	public ResponseEntity<Map<String, List<ParticipantStatusDTO>>> getParticipants(@PathVariable Long documentId) {
+		try {
+			Map<String, List<ParticipantStatusDTO>> participants = documentService.getParticipants(documentId);
+			return ResponseEntity.ok(participants);
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+	@GetMapping("/unseen-requests")
+	public List<UnseenDocumentDTO> getUnseenRequests(@RequestParam String senderEmail) {
+		return documentService.getUnseenRequests(senderEmail);
+	}
+
+	@PutMapping("/markAsSeen/{documentId}")
+	public ResponseEntity<String> markAsSeen(@PathVariable Long documentId) {
+		documentService.markAsSeen(documentId); // ✅ delegate to service
+		return ResponseEntity.ok("Marked as seen");
+	}
+
 }

@@ -21,6 +21,7 @@ public class CompanyCredits {
 	private Integer balanceCredit = 0;
 	private Integer usedCredit = 0;
 	private LocalDate updatedAt;
+	private Integer creditPriceUnit = 5;
 
 	public Long getId() {
 		return id;
@@ -100,6 +101,14 @@ public class CompanyCredits {
 
 	public void setUpdatedAt(LocalDate updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public Integer getCreditPriceUnit() {
+		return creditPriceUnit;
+	}
+
+	public void setCreditPriceUnit(Integer creditPriceUnit) {
+		this.creditPriceUnit = creditPriceUnit;
 	}
 
 }

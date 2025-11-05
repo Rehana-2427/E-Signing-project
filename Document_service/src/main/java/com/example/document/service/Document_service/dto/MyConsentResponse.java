@@ -12,9 +12,15 @@ public class MyConsentResponse {
 	private int totalSigners;
 	private int signedCount;
 	private byte[] editedFile;
+	private LocalDate reviewedOn;
+	private int totalReviwers;
+	private int reviwercount;
+	private String reviewerStatus;
+	private String documentStatus;
 
 	public MyConsentResponse(Long documentId, String documentName, LocalDate sentOn, boolean draft, LocalDate signedOn,
-			int totalSigners, int signedCount, byte[] editedFile) {
+			int totalSigners, int signedCount, byte[] editedFile, LocalDate reviewedOn, int totalReviwers,
+			int reviwercount, String reviewerStatus,String documentStatus) {
 		super();
 		this.documentId = documentId;
 		this.documentName = documentName;
@@ -24,6 +30,11 @@ public class MyConsentResponse {
 		this.totalSigners = totalSigners;
 		this.signedCount = signedCount;
 		this.editedFile = editedFile;
+		this.reviewedOn = reviewedOn;
+		this.totalReviwers = totalReviwers;
+		this.reviwercount = reviwercount;
+		this.reviewerStatus = reviewerStatus;
+		this.documentStatus=documentStatus;
 	}
 
 	public Long getDocumentId() {
@@ -88,6 +99,46 @@ public class MyConsentResponse {
 
 	public void setEditedFile(byte[] editedFile) {
 		this.editedFile = editedFile;
+	}
+
+	public LocalDate getReviewedOn() {
+		return reviewedOn;
+	}
+
+	public void setReviewedOn(LocalDate reviewedOn) {
+		this.reviewedOn = reviewedOn;
+	}
+
+	public int getTotalReviwers() {
+		return totalReviwers;
+	}
+
+	public void setTotalReviwers(int totalReviwers) {
+		this.totalReviwers = totalReviwers;
+	}
+
+	public int getReviwercount() {
+		return reviwercount;
+	}
+
+	public void setReviwercount(int reviwercount) {
+		this.reviwercount = reviwercount;
+	}
+
+	public String getReviewerStatus() {
+		return reviewerStatus;
+	}
+
+	public void setReviewerStatus(String reviewerStatus) {
+		this.reviewerStatus = reviewerStatus;
+	}
+
+	public String getDocumentStatus() {
+		return documentStatus;
+	}
+
+	public void setDocumentStatus(String documentStatus) {
+		this.documentStatus = documentStatus;
 	}
 
 	@Override

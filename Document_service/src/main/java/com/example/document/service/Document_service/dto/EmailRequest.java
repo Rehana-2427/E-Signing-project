@@ -12,6 +12,7 @@ public class EmailRequest {
 	private LocalDate signRequiredBy;
 	private byte[] pdfBytes;
 	private String senderName;
+	private String companyName;
 	private String to;
 	private LocalDate signedAt;
 	private String summaryStatus;
@@ -20,6 +21,10 @@ public class EmailRequest {
 	private List<RecipientToken> recipients;
 
 	private List<SignerInfo> signers;
+
+	private List<ReviewrRequest> reviewerEmails;
+
+	private List<ReviewerToken> reviewers;
 
 	public String getSenderEmail() {
 		return senderEmail;
@@ -115,6 +120,30 @@ public class EmailRequest {
 
 	public void setSigners(List<SignerInfo> signers) {
 		this.signers = signers;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public List<ReviewrRequest> getReviewerEmails() {
+		return reviewerEmails;
+	}
+
+	public void setReviewerEmails(List<ReviewrRequest> reviewerEmails) {
+		this.reviewerEmails = reviewerEmails;
+	}
+
+	public List<ReviewerToken> getReviewers() {
+		return reviewers;
+	}
+
+	public void setReviewers(List<ReviewerToken> reviewers) {
+		this.reviewers = reviewers;
 	}
 
 	@Override

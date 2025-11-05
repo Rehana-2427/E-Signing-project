@@ -20,7 +20,10 @@ public class CreditRequest {
 	private LocalDate requestedAt;
 	private boolean seenByAdmin = false;
 
+	private int requestCPUnit;
 	private String companyName;
+
+	private String mobileNumber;
 
 	@PrePersist
 	public void prePersist() {
@@ -33,6 +36,14 @@ public class CreditRequest {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public int getRequestCPUnit() {
+		return requestCPUnit;
+	}
+
+	public void setRequestCPUnit(int requestCPUnit) {
+		this.requestCPUnit = requestCPUnit;
 	}
 
 	public String getUserName() {
@@ -81,6 +92,14 @@ public class CreditRequest {
 
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 
 }

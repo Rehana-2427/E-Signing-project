@@ -35,4 +35,7 @@ public interface EmailClient {
 	@PostMapping("/send-report")
     ResponseEntity<String> sendSigningReport(@RequestBody ReportRequestDto reportRequestDto);
 
+	@PostMapping("/sendDocumentDetailsReviewers")
+	void sendDocumentReviewRequestEmail(EmailRequest reviewerEmailRequest);
+
 }

@@ -114,6 +114,21 @@ public class EmailController {
         return ResponseEntity.ok("Emails sent successfully");
     }
     
+    @PostMapping("/sendDocumentDetailsReviewers")
+	public ResponseEntity<String> sendEmailsToReviewers(@RequestBody EmailRequest request) {
+		try {
+			System.out.println("email send to reviewer"+ request.getReviewerEmails());
+			emailService.sendEmailToReviewers(request);
+
+			return ResponseEntity.ok("Emails sent successfully.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Email sending failed.");
+		}
+	}
+
+    
+    
     public String postMethodName(@RequestBody String entity) {
         //TODO: process POST request
         

@@ -20,10 +20,11 @@ public class CreditSettingsServiceImpl implements CreditSettingsService {
 
 	@Override
 	@CacheEvict(value = "creditHistory", allEntries = true)
-	public CreditSettings updateSettings(int docCost, int signCost) {
+	public CreditSettings updateSettings(int docCost, int signCost,int reviewerCost) {
 		CreditSettings settings = new CreditSettings();
 		settings.setDocCost(docCost);
 		settings.setSignCost(signCost);
+		settings.setReviwerCost(reviewerCost);
 		settings.setUpdatedAt(LocalDate.now());
 		return creditSettingsRepository.save(settings);
 	}

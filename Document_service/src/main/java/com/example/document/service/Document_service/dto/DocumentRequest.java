@@ -22,9 +22,11 @@ public class DocumentRequest {
 	private Boolean draft = false;
 	private Integer documentCharge;
 	private Integer signatoryCharge;
+	private Integer reviewerCharge;
 	private Integer totalCredits;
-
+	private String companyName;
 	private List<SignerRequest> signers;
+	private List<ReviewrRequest> reviewers;
 
 	public Long getDocumentId() {
 		return documentId;
@@ -162,6 +164,14 @@ public class DocumentRequest {
 		this.signatoryCharge = signatoryCharge;
 	}
 
+	public Integer getReviewerCharge() {
+		return reviewerCharge;
+	}
+
+	public void setReviewerCharge(Integer reviewerCharge) {
+		this.reviewerCharge = reviewerCharge;
+	}
+
 	public Integer getTotalCredits() {
 		return totalCredits;
 	}
@@ -184,6 +194,22 @@ public class DocumentRequest {
 
 	public void setDraft(Boolean draft) {
 		this.draft = draft;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public List<ReviewrRequest> getReviewers() {
+		return reviewers;
+	}
+
+	public void setReviewers(List<ReviewrRequest> reviewers) {
+		this.reviewers = reviewers;
 	}
 
 	@Override

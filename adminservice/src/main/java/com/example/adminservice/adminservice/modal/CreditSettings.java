@@ -18,6 +18,8 @@ public class CreditSettings {
 
 	private int signCost;
 
+	private int reviwerCost;
+
 	private LocalDate updatedAt;
 
 	public Long getId() {
@@ -42,6 +44,14 @@ public class CreditSettings {
 
 	public void setSignCost(int signCost) {
 		this.signCost = signCost;
+	}
+
+	public int getReviwerCost() {
+		return reviwerCost;
+	}
+
+	public void setReviwerCost(int reviwerCost) {
+		this.reviwerCost = reviwerCost;
 	}
 
 	public LocalDate getUpdatedAt() {

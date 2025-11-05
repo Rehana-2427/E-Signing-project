@@ -1,9 +1,5 @@
 package com.example.document.service.Document_service.dto;
 
-import java.util.Arrays;
-
-import jakarta.persistence.Lob;
-
 public class SignerRequest {
 	private String name;
 	private String email;

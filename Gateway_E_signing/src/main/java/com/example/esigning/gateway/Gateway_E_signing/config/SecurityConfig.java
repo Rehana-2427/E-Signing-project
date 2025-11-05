@@ -18,7 +18,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
 		return http.csrf().disable().authorizeExchange()
-				.pathMatchers("/authservice/**", "/documentservice/**", "/adminservice/**", "/email-service/**","/companyService/**")
+				.pathMatchers("/authservice/**", "/documentservice/**", "/adminservice/**", "/email-service/**","/companyService/**","/chat-service/**")
 				.permitAll().anyExchange().authenticated().and()
 				.authenticationManager(new JwtReactiveAuthenticationManager(jwtSecret))
 				.securityContextRepository(new JwtSecurityContextRepository(jwtSecret)).build();

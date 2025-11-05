@@ -37,4 +37,8 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 	           "GROUP BY MONTH(d.createdDate)")
 	List<Object[]> getSentConsentStatsByMonth(String senderEmail);
 
+//	List<Document> findBySeenBySenderFalse();
+
+	List<Document> findBySeenBySenderFalseAndSenderEmail(String senderEmail);
+
 }

@@ -24,6 +24,8 @@ public class CreditRequestServiceImpl implements CreditRequestService {
 			request.setCompanyName(message.getCompanyName());
 			request.setUserEmail(message.getUserEmail());
 			request.setUserName(message.getUserName());
+			request.setMobileNumber(message.getMobileNumber());
+			
 		} else {
 			if (message.getUserName() == null || message.getUserEmail() == null) {
 				throw new IllegalArgumentException("User name and email are required for user requests");
@@ -31,9 +33,12 @@ public class CreditRequestServiceImpl implements CreditRequestService {
 			request.setUserName(message.getUserName());
 			request.setUserEmail(message.getUserEmail());
 		}
-	
+
 		request.setRequestedCredits(message.getRequestedCredits());
+		request.setRequestCPUnit(message.getRequestCPUnit());
 		request.setSeenByAdmin(false);
+		
+		
 		CreditRequest saved = creditRequestRepository.save(request);
 
 	}

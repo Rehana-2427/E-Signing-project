@@ -6,7 +6,7 @@ import com.example.adminservice.adminservice.modal.CreditSettings;
 
 public interface CreditSettingsService {
 
-	CreditSettings updateSettings(int docCost, int signCost);
+	CreditSettings updateSettings(int docCost, int signCost, int reviewerCost);
 
 	List<CreditSettings> getAllSettings();
 

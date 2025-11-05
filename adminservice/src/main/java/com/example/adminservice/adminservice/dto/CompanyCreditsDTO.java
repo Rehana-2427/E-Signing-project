@@ -5,13 +5,16 @@ public class CompanyCreditsDTO {
 	private Integer paidcredits = 0;
 	private Integer balanceCredit = 0;
 	private Integer usedCredit = 0;
+	private Integer creditPriceUnit = 5;
 
-	public CompanyCreditsDTO(Integer freeCreidts, Integer paidcredits, Integer balanceCredit, Integer usedCredit) {
+	public CompanyCreditsDTO(Integer freeCreidts, Integer paidcredits, Integer balanceCredit, Integer usedCredit,
+			Integer creditPriceUnit) {
 		super();
 		this.freeCreidts = freeCreidts;
 		this.paidcredits = paidcredits;
 		this.balanceCredit = balanceCredit;
 		this.usedCredit = usedCredit;
+		this.creditPriceUnit = creditPriceUnit;
 	}
 
 	public Integer getFreeCreidts() {
@@ -44,6 +47,14 @@ public class CompanyCreditsDTO {
 
 	public void setUsedCredit(Integer usedCredit) {
 		this.usedCredit = usedCredit;
+	}
+
+	public Integer getCreditPriceUnit() {
+		return creditPriceUnit;
+	}
+
+	public void setCreditPriceUnit(Integer creditPriceUnit) {
+		this.creditPriceUnit = creditPriceUnit;
 	}
 
 }

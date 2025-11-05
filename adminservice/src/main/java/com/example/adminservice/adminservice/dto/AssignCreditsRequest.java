@@ -4,6 +4,7 @@ public class AssignCreditsRequest {
 	private String userEmail;
 	private int creditsToAssign;
 	private String companyName;
+	private int assignCPU;
 
 	public String getUserEmail() {
 		return userEmail;
@@ -27,6 +28,14 @@ public class AssignCreditsRequest {
 
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
+	}
+
+	public int getAssignCPU() {
+		return assignCPU;
+	}
+
+	public void setAssignCPU(int assignCPU) {
+		this.assignCPU = assignCPU;
 	}
 
 }

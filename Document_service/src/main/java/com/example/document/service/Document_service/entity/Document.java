@@ -2,6 +2,7 @@ package com.example.document.service.Document_service.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class Document {
 	private String documentName;
 	private String description;
 	private String fileName;
+	private String companyName;
 
 	private String signingMode;
 	private String on_The_Side;
@@ -31,18 +33,28 @@ public class Document {
 
 	private Integer documentCharge;
 	private Integer signatoryCharge;
+	private Integer reviewerCharge;
 	private Integer totalCredits;
 	private Boolean draft = false;
 	@Lob
 	private byte[] editedFile;
 	@Column(updatable = false)
 	private LocalDate createdDate;
+
+	private Boolean isReviewerAdded = false;
 	@OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Signer> signers;
+	private List<Reviewer> reviewers = new ArrayList<>(); // <- initialize here
+
+	@OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Signer> signers = new ArrayList<>();
+
+	private String documentStatus = "IN_REVIEW";
+
+	private boolean seenBySender = false;
 
 	@PrePersist
 	protected void onCreate() {
-		this.createdDate = LocalDate.now(); // You can use LocalDateTime.now() if needed
+		this.createdDate = LocalDate.now();
 	}
 
 	public Long getId() {
@@ -67,6 +79,14 @@ public class Document {
 
 	public void setDocumentName(String documentName) {
 		this.documentName = documentName;
+	}
+
+	public String getDocumentStatus() {
+		return documentStatus;
+	}
+
+	public void setDocumentStatus(String documentStatus) {
+		this.documentStatus = documentStatus;
 	}
 
 	public String getDescription() {
@@ -173,6 +193,14 @@ public class Document {
 		this.signatoryCharge = signatoryCharge;
 	}
 
+	public Integer getReviewerCharge() {
+		return reviewerCharge;
+	}
+
+	public void setReviewerCharge(Integer reviewerCharge) {
+		this.reviewerCharge = reviewerCharge;
+	}
+
 	public Integer getTotalCredits() {
 		return totalCredits;
 	}
@@ -219,6 +247,38 @@ public class Document {
 
 	public void setCreatedDate(LocalDate createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public Boolean getIsReviewerAdded() {
+		return isReviewerAdded;
+	}
+
+	public void setIsReviewerAdded(Boolean isReviewerAdded) {
+		this.isReviewerAdded = isReviewerAdded;
+	}
+
+	public List<Reviewer> getReviewers() {
+		return reviewers;
+	}
+
+	public void setReviewers(List<Reviewer> reviewers) {
+		this.reviewers = reviewers;
+	}
+
+	public boolean isSeenBySender() {
+		return seenBySender;
+	}
+
+	public void setSeenBySender(boolean seenBySender) {
+		this.seenBySender = seenBySender;
 	}
 
 	@Override

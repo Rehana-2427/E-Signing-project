@@ -1,7 +1,5 @@
 package com.example.document.service.Document_service.dto;
 
-import java.time.LocalDate;
-
 public class RecipientToken {
 	private String name;
 	private String email;

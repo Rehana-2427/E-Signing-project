@@ -20,7 +20,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 	@Value("${jwt.secret}")
 	private String jwtSecret;
 	private static final String[] WHITELIST = { "/authservice/", "/email-service/", "/documentservice/",
-			"/adminservice/","/companyService/" };
+			"/adminservice/","/companyService/","/chat-service/"};
 
 	private boolean isWhitelisted(String path) {
 		for (String allowedPath : WHITELIST) {

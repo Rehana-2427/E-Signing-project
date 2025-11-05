@@ -22,7 +22,7 @@ public class CreditSettingsController {
 
 	@PostMapping("/saveCredits")
 	public CreditSettings updateSettings(@RequestBody CreditSettingsRequest request) {
-		return creditSettingsService.updateSettings(request.getDocCost(), request.getSignCost());
+		return creditSettingsService.updateSettings(request.getDocCost(), request.getSignCost(),request.getReviewerCost());
 	}
 
 	@GetMapping("/creditHistory")

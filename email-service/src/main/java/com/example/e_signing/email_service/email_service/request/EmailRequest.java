@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class EmailRequest {
 
 	private String to;
@@ -12,6 +13,7 @@ public class EmailRequest {
 	private String otp;
 	private String senderName;
 	private String senderEmail;
+	private String companyName;
 //	private List<String> recipientEmails;
 	private List<RecipientToken> recipients;
 	private String title;
@@ -21,6 +23,10 @@ public class EmailRequest {
 	private String summaryStatus;
 	private Long id;
 	private List<SignerInfo> signers;
+
+	private List<ReviewrRequest> reviewerEmails;
+
+	private List<ReviewerToken> reviewers;
 
 	public String getTo() {
 		return to;
@@ -140,6 +146,30 @@ public class EmailRequest {
 
 	public void setSigners(List<SignerInfo> signers) {
 		this.signers = signers;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public List<ReviewrRequest> getReviewerEmails() {
+		return reviewerEmails;
+	}
+
+	public void setReviewerEmails(List<ReviewrRequest> reviewerEmails) {
+		this.reviewerEmails = reviewerEmails;
+	}
+
+	public List<ReviewerToken> getReviewers() {
+		return reviewers;
+	}
+
+	public void setReviewers(List<ReviewerToken> reviewers) {
+		this.reviewers = reviewers;
 	}
 
 	@Override

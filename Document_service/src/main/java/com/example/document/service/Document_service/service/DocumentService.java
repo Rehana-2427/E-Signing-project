@@ -11,6 +11,8 @@ import com.example.document.service.Document_service.dto.AuditTrailResponseDto;
 import com.example.document.service.Document_service.dto.DocumentRequest;
 import com.example.document.service.Document_service.dto.EmailRequest;
 import com.example.document.service.Document_service.dto.MyConsentResponse;
+import com.example.document.service.Document_service.dto.ParticipantStatusDTO;
+import com.example.document.service.Document_service.dto.UnseenDocumentDTO;
 import com.example.document.service.Document_service.entity.Document;
 
 //
@@ -66,4 +68,17 @@ public interface DocumentService {
 	List<MyConsentResponse> getSearchSentConsensts(String senderEmail, String query);
 
 	List<MyConsentResponse> getSearchDraftConsensts(String senderEmail, String query);
+
+	ResponseEntity<byte[]> getDocumentForReviewer(Long documentId, String email);
+
+	Map<String, List<ParticipantStatusDTO>> getParticipants(Long documentId);
+
+	String sendToSigners(long documentId);
+
+	List<UnseenDocumentDTO> getUnseenRequests(String senderEmail);
+
+	void markAsSeen(Long documentId);
+
+
+
 }
